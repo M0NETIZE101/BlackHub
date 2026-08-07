@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieHub - Your Movie Streaming Guide</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- ===== HEADER / NAVIGATION ===== -->
+    <header class="header" id="header">
+        <nav class="nav">
+            <div class="logo">
+                <i class="fas fa-film" style="color: #e50914;"></i>
+                <span>Movie<span style="color: #e50914;">Hub</span></span>
+            </div>
+            <div class="nav-links">
+                <a href="#" class="active" data-category="now_playing">Now Playing</a>
+                <a href="#" data-category="popular">Popular</a>
+                <a href="#" data-category="top_rated">Top Rated</a>
+                <a href="#" data-category="upcoming">Upcoming</a>
+            </div>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search movies..." class="search-input">
+                <button id="searchBtn" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ===== HERO BANNER ===== -->
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <h1 id="heroTitle">Welcome to MovieHub</h1>
+            <p id="heroDescription">Discover the best movies, create your watchlist, and track what you've watched.</p>
+            <button class="hero-btn" id="browseBtn">
+                <i class="fas fa-play"></i> Browse Movies
+            </button>
+        </div>
+    </section>
+
+    <!-- ===== MOVIES SECTION ===== -->
+    <section class="movies-section">
+        <div class="section-header">
+            <h2 id="sectionTitle">Now Playing</h2>
+            <div class="view-toggle">
+                <button class="view-btn active" data-view="grid">
+                    <i class="fas fa-th"></i>
+                </button>
+                <button class="view-btn" data-view="list">
+                    <i class="fas fa-list"></i>
+                </button>
+            </div>
+        </div>
+        <div class="movies-grid grid-view" id="moviesGrid">
+            <!-- Movies will be dynamically loaded here -->
+        </div>
+        <div class="load-more-container">
+            <button id="loadMoreBtn" class="load-more-btn" style="display: none;">
+                Load More <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+    </section>
+
+    <!-- ===== MOVIE DETAIL MODAL ===== -->
+    <div class="modal" id="movieModal">
+        <div class="modal-content">
+            <span class="modal-close" id="modalClose">&times;</span>
+            <div id="modalBody">
+                <!-- Modal content will be dynamically loaded -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== VIDEO PLAYER MODAL ===== -->
+    <div class="player-modal" id="playerModal">
+        <div class="player-container">
+            <div class="player-header">
+                <h3 id="playerTitle">Now Playing</h3>
+                <button class="player-close" id="playerClose">&times;</button>
+            </div>
+            <div class="player-wrapper">
+                <iframe id="playerIframe"
+                        src=""
+                        width="100%"
+                        height="100%"
+                        frameborder="0"
+                        allowfullscreen
+                        allow="autoplay; encrypted-media"
+                        loading="lazy">
+                </iframe>
+            </div>
+            <div class="player-controls">
+                <button id="fullscreenBtn">
+                    <i class="fas fa-expand"></i> Fullscreen
+                </button>
+                <button id="reloadBtn">
+                    <i class="fas fa-sync"></i> Reload
+                </button>
+                <button id="closePlayerBtn">
+                    <i class="fas fa-times"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>MovieHub</h3>
+                <p>Your ultimate movie streaming guide. Discover, track, and enjoy movies.</p>
+            </div>
+            <div class="footer-section">
+                <h4>Categories</h4>
+                <a href="#" data-category="now_playing">Now Playing</a>
+                <a href="#" data-category="popular">Popular</a>
+                <a href="#" data-category="top_rated">Top Rated</a>
+                <a href="#" data-category="upcoming">Upcoming</a>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 MovieHub. All rights reserved. Data provided by TMDB.</p>
+        </div>
+    </footer>
+
+    <!-- ===== SCRIPTS (LOAD AT THE END) ===== -->
+    <script src="embed-config.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MovieHub - Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ============================================
+           Admin Login Styles
+           ============================================ */
+        .admin-login {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            padding: 20px;
+        }
+
+        .login-box {
+            background: var(--bg-secondary);
+            padding: 40px;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-width: 400px;
+            width: 100%;
+            box-shadow: var(--shadow);
+        }
+
+        .login-box .logo {
+            text-align: center;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .login-box .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-bottom: 32px;
+        }
+
+        .login-box .form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-box .form-group label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .password-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input-wrapper input {
+            width: 100%;
+            padding: 12px 14px;
+            padding-right: 48px;
+            background: var(--bg-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .password-input-wrapper input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .password-input-wrapper .toggle-password {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+            transition: var(--transition);
+        }
+
+        .password-input-wrapper .toggle-password:hover {
+            color: var(--text-primary);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .login-btn:hover {
+            background: var(--primary-hover);
+            transform: scale(1.02);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-error {
+            color: var(--primary);
+            font-size: 14px;
+            text-align: center;
+            margin-top: 12px;
+            min-height: 20px;
+        }
+
+        .login-error.hidden {
+            display: none;
+        }
+
+        .login-hint {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-top: 16px;
+        }
+
+        /* Lock icon animation */
+        .lock-icon {
+            font-size: 48px;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        /* Admin content hidden by default */
+        .admin-content-wrapper {
+            display: none;
+        }
+
+        .admin-content-wrapper.visible {
+            display: block;
+        }
+
+        /* Logout button */
+        .logout-btn {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-secondary);
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logout-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+
+        /* Brute force protection - lockout message */
+        .lockout-message {
+            text-align: center;
+            color: var(--primary);
+            padding: 12px;
+            background: rgba(229, 9, 20, 0.1);
+            border-radius: 8px;
+            border: 1px solid var(--primary);
+            margin-top: 12px;
+        }
+
+        .lockout-message.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ============================================ -->
+    <!-- ADMIN LOGIN PAGE                            -->
+    <!-- ============================================ -->
+    <div class="admin-login" id="loginPage">
+        <div class="login-box">
+            <div class="lock-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <div class="logo">
+                <i class="fas fa-film" style="color: #e50914;"></i>
+                <span>Movie<span style="color: #e50914;">Hub</span></span>
+            </div>
+            <div class="subtitle">Admin Panel Access</div>
+
+            <form id="loginForm" autocomplete="off">
+                <div class="form-group">
+                    <label for="passwordInput">Enter Password</label>
+                    <div class="password-input-wrapper">
+                        <input type="password" id="passwordInput" placeholder="Enter admin password" autofocus>
+                        <button type="button" class="toggle-password" id="togglePassword" aria-label="Toggle password visibility">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <i class="fas fa-sign-in-alt"></i> Unlock Admin Panel
+                </button>
+
+                <div class="login-error" id="loginError"></div>
+                <div class="lockout-message hidden" id="lockoutMessage">
+                    <i class="fas fa-clock"></i> Too many failed attempts. Please wait 30 seconds.
+                </div>
+                <div class="login-hint">🔒 Enter the admin password to continue</div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ADMIN CONTENT (Hidden until login)           -->
+    <!-- ============================================ -->
+    <div class="admin-content-wrapper" id="adminContent">
+        <!-- Admin Header -->
+        <header class="admin-header">
+            <div class="admin-nav">
+                <div class="logo">
+                    <i class="fas fa-film" style="color: #e50914;"></i>
+                    <span>Movie<span style="color: #e50914;">Hub</span></span>
+                    <span class="admin-badge">Admin</span>
+                </div>
+                <div class="admin-nav-links">
+                    <a href="index.html" target="_blank"><i class="fas fa-arrow-left"></i> Back to Site</a>
+                    <button onclick="saveAllChanges()" class="save-btn">
+                        <i class="fas fa-save"></i> Save All
+                    </button>
+                    <button onclick="logout()" class="logout-btn">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Admin Container -->
+        <div class="admin-container">
+            <!-- Sidebar -->
+            <aside class="admin-sidebar">
+                <nav class="admin-menu">
+                    <a href="#providers" class="active">
+                        <i class="fas fa-link"></i> Embed Providers
+                    </a>
+                    <a href="#overrides">
+                        <i class="fas fa-pen"></i> Custom Overrides
+                    </a>
+                    <a href="#testing">
+                        <i class="fas fa-vial"></i> Test URLs
+                    </a>
+                    <a href="#backup">
+                        <i class="fas fa-download"></i> Backup / Restore
+                    </a>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="admin-content">
+                <!-- Embed Providers Section -->
+                <section id="providers" class="admin-section">
+                    <h2><i class="fas fa-link"></i> Embed Providers</h2>
+                    <p class="section-desc">Configure which providers are used for video embeds.</p>
+
+                    <!-- Primary Provider -->
+                    <div class="provider-group">
+                        <h3>Primary Provider</h3>
+                        <div class="provider-card primary">
+                            <div class="provider-info">
+                                <div class="provider-name" id="primaryName">Autoembed</div>
+                                <div class="provider-url" id="primaryUrl">https://autoembed.co/movie/imdb/</div>
+                                <div class="provider-type" id="primaryType">IMDB ID</div>
+                            </div>
+                            <div class="provider-controls">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="primaryEnabled" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                                <button onclick="editProvider('primary')" class="edit-btn">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fallback Providers -->
+                    <div class="provider-group">
+                        <h3>Fallback Providers <span class="badge">Ordered by priority</span></h3>
+                        <div id="fallbackProviders">
+                            <!-- Fallback providers will be rendered here -->
+                        </div>
+                        <button onclick="addFallbackProvider()" class="add-btn">
+                            <i class="fas fa-plus"></i> Add Fallback Provider
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Custom Overrides Section -->
+                <section id="overrides" class="admin-section">
+                    <h2><i class="fas fa-pen"></i> Custom Overrides</h2>
+                    <p class="section-desc">Override embed URLs for specific movies.</p>
+
+                    <div class="override-list" id="overrideList">
+                        <!-- Overrides will be rendered here -->
+                    </div>
+
+                    <button onclick="addOverride()" class="add-btn">
+                        <i class="fas fa-plus"></i> Add Override
+                    </button>
+                </section>
+
+                <!-- Testing Section -->
+                <section id="testing" class="admin-section">
+                    <h2><i class="fas fa-vial"></i> Test URLs</h2>
+                    <p class="section-desc">Test if embed URLs are working.</p>
+
+                    <div class="test-container">
+                        <div class="test-input-group">
+                            <input type="text" id="testImdbId" placeholder="IMDB ID (e.g., tt1375666)">
+                            <button onclick="testEmbedUrl()" class="test-btn">
+                                <i class="fas fa-play"></i> Test
+                            </button>
+                        </div>
+                        <div id="testResults" class="test-results">
+                            <!-- Test results will appear here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Backup/Restore Section -->
+                <section id="backup" class="admin-section">
+                    <h2><i class="fas fa-download"></i> Backup & Restore</h2>
+                    <p class="section-desc">Export or import your configuration.</p>
+
+                    <div class="backup-actions">
+                        <button onclick="exportConfig()" class="backup-btn">
+                            <i class="fas fa-file-export"></i> Export Configuration
+                        </button>
+                        <button onclick="document.getElementById('importFile').click()" class="restore-btn">
+                            <i class="fas fa-file-import"></i> Import Configuration
+                        </button>
+                        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importConfig(event)">
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Edit Provider Modal -->
+        <div class="modal" id="editProviderModal">
+            <div class="modal-content">
+                <span class="modal-close" onclick="closeEditModal()">&times;</span>
+                <h2>Edit Provider</h2>
+                <form id="editProviderForm">
+                    <div class="form-group">
+                        <label>Provider Name</label>
+                        <input type="text" id="editProviderName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Base URL</label>
+                        <input type="url" id="editProviderUrl" required>
+                    </div>
+                    <div class="form-group">
+                        <label>ID Type</label>
+                        <select id="editProviderType">
+                            <option value="imdb">IMDB ID</option>
+                            <option value="tmdb">TMDB ID</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="save-btn">Save Provider</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Add Override Modal -->
+        <div class="modal" id="addOverrideModal">
+            <div class="modal-content">
+                <span class="modal-close" onclick="closeOverrideModal()">&times;</span>
+                <h2>Add Custom Override</h2>
+                <form id="addOverrideForm">
+                    <div class="form-group">
+                        <label>IMDB ID</label>
+                        <input type="text" id="overrideImdbId" placeholder="tt1375666" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Custom Embed URL</label>
+                        <input type="url" id="overrideUrl" placeholder="https://custom-provider.com/embed/..." required>
+                    </div>
+                    <button type="submit" class="save-btn">Add Override</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="embed-config.js"></script>
+    <script src="admin-script.js"></script>
+</body>
+</html>
