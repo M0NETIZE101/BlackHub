@@ -1,9 +1,16 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="theme-color" content="#141414">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>BlackHub - Your Movie Streaming Guide</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e50914'/%3E%3Ctext x='50' y='68' font-size='60' font-family='Arial' text-anchor='middle' fill='white' font-weight='bold'%3EBH%3C/text%3E%3C/svg%3E">
+    
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -15,16 +22,28 @@
                 <i class="fas fa-film" style="color: #e50914;"></i>
                 <span>Black<span style="color: #e50914;">Hub</span></span>
             </div>
-            <div class="nav-links">
+            
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="nav-links" id="navLinks">
                 <a href="#" class="active" data-category="now_playing">Now Playing</a>
                 <a href="#" data-category="popular">Popular</a>
                 <a href="#" data-category="top_rated">Top Rated</a>
                 <a href="#" data-category="upcoming">Upcoming</a>
             </div>
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Search movies..." class="search-input">
-                <button id="searchBtn" class="search-btn">
-                    <i class="fas fa-search"></i>
+
+            <div class="header-actions">
+                <div class="search-container">
+                    <input type="text" id="searchInput" placeholder="Search movies..." class="search-input">
+                    <button id="searchBtn" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
                 </button>
             </div>
         </nav>
@@ -39,12 +58,53 @@
                 <i class="fas fa-play"></i> Browse Movies
             </button>
         </div>
+        <div class="hero-image" id="heroImage">
+            <div class="hero-image-placeholder">
+                <i class="fas fa-film"></i>
+            </div>
+        </div>
     </section>
 
     <!-- ===== MOVIES SECTION ===== -->
     <section class="movies-section">
         <div class="section-header">
-            <h2 id="sectionTitle">Now Playing</h2>
+            <div>
+                <h2 id="sectionTitle">Now Playing</h2>
+                <div class="filter-container">
+                    <select id="genreFilter" class="filter-select">
+                        <option value="all">All Genres</option>
+                        <option value="28">Action</option>
+                        <option value="35">Comedy</option>
+                        <option value="18">Drama</option>
+                        <option value="878">Sci-Fi</option>
+                        <option value="16">Animation</option>
+                        <option value="10749">Romance</option>
+                        <option value="27">Horror</option>
+                        <option value="12">Adventure</option>
+                        <option value="14">Fantasy</option>
+                        <option value="53">Thriller</option>
+                        <option value="9648">Mystery</option>
+                        <option value="10752">War</option>
+                        <option value="37">Western</option>
+                    </select>
+                    <select id="yearFilter" class="filter-select">
+                        <option value="all">All Years</option>
+                        <option value="2026">2026</option>
+                        <option value="2025">2025</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                    </select>
+                    <select id="sortFilter" class="filter-select">
+                        <option value="popularity.desc">Most Popular</option>
+                        <option value="vote_average.desc">Top Rated</option>
+                        <option value="release_date.desc">Newest</option>
+                        <option value="revenue.desc">Highest Grossing</option>
+                    </select>
+                </div>
+            </div>
             <div class="view-toggle">
                 <button class="view-btn active" data-view="grid">
                     <i class="fas fa-th"></i>
@@ -54,9 +114,11 @@
                 </button>
             </div>
         </div>
+
         <div class="movies-grid grid-view" id="moviesGrid">
             <!-- Movies will be dynamically loaded here -->
         </div>
+
         <div class="load-more-container">
             <button id="loadMoreBtn" class="load-more-btn" style="display: none;">
                 Load More <i class="fas fa-chevron-down"></i>
@@ -88,9 +150,13 @@
                         height="100%"
                         frameborder="0"
                         allowfullscreen
-                        allow="autoplay; encrypted-media"
+                        allow="autoplay; encrypted-media; fullscreen"
                         loading="lazy">
                 </iframe>
+                <div class="player-loading" id="playerLoading" style="display: none;">
+                    <div class="spinner"></div>
+                    <span>Loading video...</span>
+                </div>
             </div>
             <div class="player-controls">
                 <button id="fullscreenBtn">
@@ -105,6 +171,50 @@
             </div>
         </div>
     </div>
+
+    <!-- ===== TRAILER MODAL ===== -->
+    <div class="trailer-modal" id="trailerModal">
+        <div class="trailer-content">
+            <button class="trailer-close" id="trailerClose">
+                <i class="fas fa-times"></i>
+            </button>
+            <iframe id="trailerIframe"
+                    src=""
+                    frameborder="0"
+                    allowfullscreen
+                    allow="autoplay; encrypted-media">
+            </iframe>
+        </div>
+    </div>
+
+    <!-- ===== BACK TO TOP ===== -->
+    <button id="backToTop" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- ===== MOBILE BOTTOM NAVIGATION ===== -->
+    <nav class="mobile-bottom-nav" id="mobileBottomNav">
+        <a href="#" class="active" data-category="now_playing">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="#" data-category="popular">
+            <i class="fas fa-fire"></i>
+            <span>Popular</span>
+        </a>
+        <a href="#" data-category="top_rated">
+            <i class="fas fa-star"></i>
+            <span>Top</span>
+        </a>
+        <a href="#" data-category="upcoming">
+            <i class="fas fa-calendar-plus"></i>
+            <span>Upcoming</span>
+        </a>
+        <a href="#" id="mobileSearchToggle">
+            <i class="fas fa-search"></i>
+            <span>Search</span>
+        </a>
+    </nav>
 
     <!-- ===== FOOTER ===== -->
     <footer class="footer">
@@ -123,18 +233,19 @@
             <div class="footer-section">
                 <h4>Follow Us</h4>
                 <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="#" class="social-link" data-platform="facebook"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-link" data-platform="twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link" data-platform="instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link" data-platform="youtube"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 BlackHub. All rights reserved. Data provided by TMDB.</p>
+            <p>&copy; 2026 BlackHub. All rights reserved. Data provided by TMDB.<br>A Product of <span class="brand">MINDS OF INTELLECTS</span></p>
         </div>
     </footer>
 
+    <!-- ===== SCRIPTS ===== -->
     <script src="embed-config.js"></script>
     <script src="script.js"></script>
 </body>

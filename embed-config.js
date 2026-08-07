@@ -1,17 +1,15 @@
 // ============================================
-// embed-config.js - Video Embed Configuration
+// BlackHub - Embed Configuration
 // ============================================
 
 // Embed providers configuration
 const EMBED_PROVIDERS = {
-    // Primary provider (currently autoembed)
     primary: {
         name: 'Autoembed',
         baseUrl: 'https://autoembed.co/movie/imdb/',
-        type: 'imdb', // or 'tmdb'
+        type: 'imdb',
         enabled: true,
     },
-    // Fallback providers
     fallbacks: [
         {
             name: 'VidSrc',
@@ -38,17 +36,13 @@ const EMBED_PROVIDERS = {
             enabled: true,
         },
     ],
-    // Custom URLs for specific movies (overrides)
-    customOverrides: {
-        // 'tt1375666': 'https://custom-provider.com/embed/inception',
-        // 'tt22084616': 'https://another-provider.com/movie/12345',
-    },
+    customOverrides: {},
 };
 
 // Get the embed URL for a movie
 function getEmbedUrl(imdbId, tmdbId) {
     // Check for custom override first
-    if (EMBED_PROVIDERS.customOverrides[imdbId]) {
+    if (imdbId && EMBED_PROVIDERS.customOverrides[imdbId]) {
         return EMBED_PROVIDERS.customOverrides[imdbId];
     }
 
@@ -56,25 +50,28 @@ function getEmbedUrl(imdbId, tmdbId) {
     const primary = EMBED_PROVIDERS.primary;
     if (primary.enabled) {
         const id = primary.type === 'imdb' ? imdbId : tmdbId;
-        return `${primary.baseUrl}${id}`;
-    }
-
-    // If primary is disabled, try fallbacks
-    for (const provider of EMBED_PROVIDERS.fallbacks) {
-        if (provider.enabled) {
-            const id = provider.type === 'imdb' ? imdbId : tmdbId;
-            return `${provider.baseUrl}${id}`;
+        if (id) {
+            return primary.baseUrl + id;
         }
     }
 
-    // If no providers are enabled, return null
+    // Try fallback providers
+    for (const provider of EMBED_PROVIDERS.fallbacks) {
+        if (provider.enabled) {
+            const id = provider.type === 'imdb' ? imdbId : tmdbId;
+            if (id) {
+                return provider.baseUrl + id;
+            }
+        }
+    }
+
     return null;
 }
 
 // Test if a provider URL is working
 async function testProviderUrl(url) {
     try {
-        const response = await fetch(url, { 
+        const response = await fetch(url, {
             method: 'HEAD',
             mode: 'no-cors',
         });
@@ -107,24 +104,69 @@ function getEnabledProviders() {
     return providers;
 }
 
-// Save configuration to localStorage (for admin panel)
+// Save configuration to localStorage
 function saveEmbedConfig(config) {
-    localStorage.setItem('embedConfig', JSON.stringify(config));
-    // Also save to a cookie or send to server if needed
+    try {
+        localStorage.setItem('embedConfig', JSON.stringify(config));
+        Object.assign(EMBED_PROVIDERS, config);
+        return true;
+    } catch (e) {
+        console.error('Error saving config:', e);
+        return false;
+    }
 }
 
 // Load configuration from localStorage
 function loadEmbedConfig() {
-    const saved = localStorage.getItem('embedConfig');
-    if (saved) {
-        try {
+    try {
+        const saved = localStorage.getItem('embedConfig');
+        if (saved) {
             const config = JSON.parse(saved);
-            // Merge with defaults
             Object.assign(EMBED_PROVIDERS, config);
-        } catch (e) {
-            console.error('Error loading embed config:', e);
+            return true;
         }
+    } catch (e) {
+        console.error('Error loading embed config:', e);
     }
+    return false;
+}
+
+// Reset configuration to defaults
+function resetEmbedConfig() {
+    EMBED_PROVIDERS.primary = {
+        name: 'Autoembed',
+        baseUrl: 'https://autoembed.co/movie/imdb/',
+        type: 'imdb',
+        enabled: true,
+    };
+    EMBED_PROVIDERS.fallbacks = [
+        {
+            name: 'VidSrc',
+            baseUrl: 'https://vidsrc.to/embed/movie/',
+            type: 'tmdb',
+            enabled: true,
+        },
+        {
+            name: '2Embed',
+            baseUrl: 'https://www.2embed.cc/embed/movie/',
+            type: 'tmdb',
+            enabled: true,
+        },
+        {
+            name: 'VidLink',
+            baseUrl: 'https://vidlink.pro/movie/',
+            type: 'tmdb',
+            enabled: true,
+        },
+        {
+            name: 'VidFast',
+            baseUrl: 'https://vidfast.co/embed/movie/',
+            type: 'tmdb',
+            enabled: true,
+        },
+    ];
+    EMBED_PROVIDERS.customOverrides = {};
+    localStorage.removeItem('embedConfig');
 }
 
 // Auto-load config on page load
@@ -138,5 +180,9 @@ if (typeof module !== 'undefined' && module.exports) {
         testProviderUrl,
         getEnabledProviders,
         saveEmbedConfig,
+        loadEmbedConfig,
+        resetEmbedConfig,
     };
 }
+
+console.log('✅ Embed config loaded successfully!');

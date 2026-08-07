@@ -1,13 +1,13 @@
 // ============================================
-// admin-script.js - Admin Panel Logic
+// BlackHub - Admin Panel Logic
 // With Password Protection
 // ============================================
 
 // ----- Password Configuration -----
-const ADMIN_PASSWORD = 'hidden'; // The password (hidden in code)
+const ADMIN_PASSWORD = 'hidden';
 const SESSION_KEY = 'adminSession';
 const MAX_ATTEMPTS = 5;
-const LOCKOUT_DURATION = 30000; // 30 seconds in milliseconds
+const LOCKOUT_DURATION = 30000;
 
 // ----- Session State -----
 let loginAttempts = 0;
@@ -18,13 +18,11 @@ let isLockedOut = false;
 // Login Functions
 // ============================================
 
-// Check if already logged in
 function checkSession() {
     const session = localStorage.getItem(SESSION_KEY);
     if (session) {
         try {
             const data = JSON.parse(session);
-            // Session expires after 24 hours
             if (Date.now() - data.timestamp < 86400000) {
                 return true;
             } else {
@@ -37,12 +35,10 @@ function checkSession() {
     return false;
 }
 
-// Login handler
 document.addEventListener('DOMContentLoaded', function() {
     const loginPage = document.getElementById('loginPage');
     const adminContent = document.getElementById('adminContent');
 
-    // Check if already logged in
     if (checkSession()) {
         loginPage.style.display = 'none';
         adminContent.classList.add('visible');
@@ -52,13 +48,11 @@ document.addEventListener('DOMContentLoaded', function() {
         setupFormListeners();
     }
 
-    // Setup login form
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
         loginForm.addEventListener('submit', handleLogin);
     }
 
-    // Toggle password visibility
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('passwordInput');
     if (togglePassword && passwordInput) {
@@ -70,7 +64,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Enter key to login
     if (passwordInput) {
         passwordInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
@@ -80,7 +73,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Handle login
 async function handleLogin(e) {
     e.preventDefault();
 
@@ -89,7 +81,6 @@ async function handleLogin(e) {
     const loginError = document.getElementById('loginError');
     const lockoutMessage = document.getElementById('lockoutMessage');
 
-    // Check if locked out
     if (isLockedOut) {
         lockoutMessage.classList.remove('hidden');
         return;
@@ -97,54 +88,42 @@ async function handleLogin(e) {
 
     const password = passwordInput.value;
 
-    // Clear previous error
     loginError.textContent = '';
     loginError.classList.add('hidden');
 
-    // Disable button during check
     loginBtn.disabled = true;
     loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking...';
 
-    // Simulate slight delay for security
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Check password (using secure comparison)
     if (password === ADMIN_PASSWORD) {
-        // Success - create session
         localStorage.setItem(SESSION_KEY, JSON.stringify({
             timestamp: Date.now(),
-            expires: Date.now() + 86400000 // 24 hours
+            expires: Date.now() + 86400000
         }));
 
-        // Hide login, show admin content
         document.getElementById('loginPage').style.display = 'none';
         document.getElementById('adminContent').classList.add('visible');
 
-        // Reset attempts
         loginAttempts = 0;
 
-        // Load admin data
         loadAdminState();
         renderProviders();
         renderOverrides();
         setupFormListeners();
 
-        // Focus first input in admin
         const firstInput = document.querySelector('#providers .toggle-switch input');
         if (firstInput) firstInput.focus();
 
     } else {
-        // Failed attempt
         loginAttempts++;
 
         if (loginAttempts >= MAX_ATTEMPTS) {
-            // Lock out
             isLockedOut = true;
             lockoutMessage.classList.remove('hidden');
             loginBtn.disabled = true;
             loginBtn.innerHTML = '<i class="fas fa-clock"></i> Locked';
 
-            // Auto-unlock after duration
             clearTimeout(lockoutTimer);
             lockoutTimer = setTimeout(function() {
                 isLockedOut = false;
@@ -157,12 +136,12 @@ async function handleLogin(e) {
                 loginError.classList.add('hidden');
             }, LOCKOUT_DURATION);
 
-            loginError.textContent = `Too many failed attempts. Locked for 30 seconds.`;
+            loginError.textContent = 'Too many failed attempts. Locked for 30 seconds.';
             loginError.classList.remove('hidden');
 
         } else {
             const remaining = MAX_ATTEMPTS - loginAttempts;
-            loginError.textContent = `Incorrect password. ${remaining} attempt(s) remaining.`;
+            loginError.textContent = 'Incorrect password. ' + remaining + ' attempt(s) remaining.';
             loginError.classList.remove('hidden');
             passwordInput.value = '';
             passwordInput.focus();
@@ -173,7 +152,6 @@ async function handleLogin(e) {
     }
 }
 
-// Logout function
 function logout() {
     localStorage.removeItem(SESSION_KEY);
     location.reload();
@@ -183,11 +161,9 @@ function logout() {
 // Admin State Management
 // ============================================
 
-// ----- State -----
 let editingProvider = null;
 let editingIndex = null;
 
-// ----- Load State -----
 function loadAdminState() {
     const saved = localStorage.getItem('embedConfig');
     if (saved) {
@@ -200,16 +176,13 @@ function loadAdminState() {
     }
 }
 
-// ----- Render Providers -----
 function renderProviders() {
-    // Primary provider
     const primary = EMBED_PROVIDERS.primary;
     document.getElementById('primaryName').textContent = primary.name;
     document.getElementById('primaryUrl').textContent = primary.baseUrl;
     document.getElementById('primaryType').textContent = primary.type === 'imdb' ? 'IMDB ID' : 'TMDB ID';
     document.getElementById('primaryEnabled').checked = primary.enabled;
 
-    // Fallback providers
     const container = document.getElementById('fallbackProviders');
     container.innerHTML = '';
 
@@ -239,13 +212,11 @@ function renderProviders() {
     });
 }
 
-// ----- Toggle Fallback -----
 function toggleFallback(index, enabled) {
     EMBED_PROVIDERS.fallbacks[index].enabled = enabled;
     saveConfig();
 }
 
-// ----- Edit Fallback -----
 function editFallback(index) {
     editingIndex = index;
     const provider = EMBED_PROVIDERS.fallbacks[index];
@@ -257,7 +228,6 @@ function editFallback(index) {
     document.getElementById('editProviderModal').style.display = 'block';
 }
 
-// ----- Delete Fallback -----
 function deleteFallback(index) {
     if (confirm('Remove this fallback provider?')) {
         EMBED_PROVIDERS.fallbacks.splice(index, 1);
@@ -266,7 +236,6 @@ function deleteFallback(index) {
     }
 }
 
-// ----- Add Fallback -----
 function addFallbackProvider() {
     editingIndex = -1;
     document.getElementById('editProviderName').value = '';
@@ -276,7 +245,6 @@ function addFallbackProvider() {
     document.getElementById('editProviderModal').style.display = 'block';
 }
 
-// ----- Edit Primary Provider -----
 function editProvider(type) {
     editingProvider = type;
     const provider = EMBED_PROVIDERS[type];
@@ -288,12 +256,10 @@ function editProvider(type) {
     document.getElementById('editProviderModal').style.display = 'block';
 }
 
-// ----- Close Edit Modal -----
 function closeEditModal() {
     document.getElementById('editProviderModal').style.display = 'none';
 }
 
-// ----- Save Provider -----
 document.getElementById('editProviderForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -311,7 +277,6 @@ document.getElementById('editProviderForm').addEventListener('submit', function(
         EMBED_PROVIDERS.primary.baseUrl = baseUrl;
         EMBED_PROVIDERS.primary.type = type;
     } else if (editingIndex === -1) {
-        // Add new fallback
         EMBED_PROVIDERS.fallbacks.push({
             name: name,
             baseUrl: baseUrl,
@@ -319,7 +284,6 @@ document.getElementById('editProviderForm').addEventListener('submit', function(
             enabled: true,
         });
     } else {
-        // Edit existing fallback
         EMBED_PROVIDERS.fallbacks[editingIndex] = {
             ...EMBED_PROVIDERS.fallbacks[editingIndex],
             name: name,
@@ -333,7 +297,6 @@ document.getElementById('editProviderForm').addEventListener('submit', function(
     closeEditModal();
 });
 
-// ----- Render Overrides -----
 function renderOverrides() {
     const container = document.getElementById('overrideList');
     container.innerHTML = '';
@@ -366,17 +329,14 @@ function renderOverrides() {
     });
 }
 
-// ----- Add Override -----
 function addOverride() {
     document.getElementById('addOverrideModal').style.display = 'block';
 }
 
-// ----- Close Override Modal -----
 function closeOverrideModal() {
     document.getElementById('addOverrideModal').style.display = 'none';
 }
 
-// ----- Save Override -----
 document.getElementById('addOverrideForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
@@ -399,7 +359,6 @@ document.getElementById('addOverrideForm').addEventListener('submit', function(e
     closeOverrideModal();
 });
 
-// ----- Delete Override -----
 function deleteOverride(imdbId) {
     if (confirm('Remove override for ' + imdbId + '?')) {
         delete EMBED_PROVIDERS.customOverrides[imdbId];
@@ -408,7 +367,6 @@ function deleteOverride(imdbId) {
     }
 }
 
-// ----- Test Embed URL -----
 async function testEmbedUrl() {
     const imdbId = document.getElementById('testImdbId').value.trim();
     const resultsContainer = document.getElementById('testResults');
@@ -446,7 +404,6 @@ async function testEmbedUrl() {
         }
     }
 
-    // Render results
     resultsContainer.innerHTML = results.map(function(result) {
         return `
             <div class="test-result-item">
@@ -464,7 +421,6 @@ async function testEmbedUrl() {
     }).join('');
 }
 
-// ----- Save Configuration -----
 function saveConfig() {
     localStorage.setItem('embedConfig', JSON.stringify(EMBED_PROVIDERS));
     showToast('Configuration saved successfully!');
@@ -474,20 +430,18 @@ function saveAllChanges() {
     saveConfig();
 }
 
-// ----- Export Configuration -----
 function exportConfig() {
     const config = localStorage.getItem('embedConfig');
     const blob = new Blob([config], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'moviehub-config-' + new Date().toISOString().split('T')[0] + '.json';
+    a.download = 'blackhub-config-' + new Date().toISOString().split('T')[0] + '.json';
     a.click();
     URL.revokeObjectURL(url);
     showToast('Configuration exported successfully!');
 }
 
-// ----- Import Configuration -----
 function importConfig(event) {
     const file = event.target.files[0];
     if (!file) return;
@@ -509,7 +463,6 @@ function importConfig(event) {
     event.target.value = '';
 }
 
-// ----- Toast Notification -----
 function showToast(message) {
     const toast = document.createElement('div');
     toast.style.cssText = `
@@ -538,16 +491,13 @@ function showToast(message) {
     }, 3000);
 }
 
-// ----- Setup Form Listeners -----
 function setupFormListeners() {
-    // Primary provider toggle
     document.getElementById('primaryEnabled').addEventListener('change', function() {
         EMBED_PROVIDERS.primary.enabled = this.checked;
         saveConfig();
     });
 }
 
-// ----- Keyboard Shortcuts -----
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeEditModal();
@@ -555,4 +505,4 @@ document.addEventListener('keydown', function(e) {
     }
 });
 
-console.log('Admin panel loaded successfully!');
+console.log('✅ Admin panel loaded successfully!');
