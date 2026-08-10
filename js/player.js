@@ -2,16 +2,18 @@
 // MoviesAndSeriesHub - Player Functions
 // ============================================
 
-// ----- Popup Blocker (Ultra-Aggressive) -----
-var popupBlockerEnabled = true;
+// ----- Popup Blocker (Active only when player is open) -----
+var popupBlockerEnabled = false; // disabled by default
 var popupCount = 0;
 var popupKillerInterval = null;
+var isPlayerActive = false;
 
-// Override window.open
+// Override window.open (checks if player is active)
 var originalOpen = window.open;
 
 window.open = function(url, name, features) {
-    if (!popupBlockerEnabled) {
+    // Only block popups if the player is active
+    if (!isPlayerActive) {
         return originalOpen.call(window, url, name, features);
     }
 
@@ -27,13 +29,12 @@ window.open = function(url, name, features) {
     return originalOpen.call(window, url, name, features);
 };
 
-// ----- Ultra-Aggressive Popup Killer (every 100ms) -----
+// ----- Start Popup Killer (only when player opens) -----
 function startPopupKiller() {
     if (popupKillerInterval) clearInterval(popupKillerInterval);
     popupKillerInterval = setInterval(function() {
-        if (!popupBlockerEnabled) return;
+        if (!isPlayerActive) return;
 
-        // Try to close any window that is not the main window
         try {
             // 1. Try to close the generic blank window
             var blankWin = window.open('', '_blank');
@@ -48,8 +49,8 @@ function startPopupKiller() {
                 } catch(e) {}
             }
 
-            // 2. Try to close windows with common names
-            var commonNames = ['_blank', '_new', '_popup', 'ad', 'ads', 'popup', 'new'];
+            // 2. Try to close windows with common ad names
+            var commonNames = ['_blank', '_new', '_popup', 'ad', 'ads', 'popup', 'new', 'window', 'tab', 'open'];
             commonNames.forEach(function(name) {
                 try {
                     var win = window.open('', name);
@@ -64,40 +65,44 @@ function startPopupKiller() {
                 } catch(e) {}
             });
 
-            // 3. Try to close any window that has an opener
-            // (can't enumerate directly, but we can try to close windows that we can reference)
-            // We'll try to close windows by using window.open with a unique name and see if it's already open.
-            // This is a hack: we try to open a window with a random name; if it returns a window that is not the main one, we close it.
-            // But that might not work because if the window doesn't exist, it will create one.
-            // Instead, we just rely on the above.
+            // 3. Try to close any window by checking window.opener
+            try {
+                var testWin = window.open('', 'testPopupWindow');
+                if (testWin && !testWin.closed && testWin !== window) {
+                    testWin.close();
+                    popupCount++;
+                    console.log('🚫 Closed test window');
+                    if (typeof showToast === 'function') {
+                        showToast('🚫 Popup blocked!', 'warning');
+                    }
+                }
+            } catch(e) {}
+
         } catch(e) { /* ignore */ }
-    }, 100); // Run every 100ms
+    }, 50);
 }
 
-// Initialize popup killer
-startPopupKiller();
-
-// Expose for debugging
-window.getPopupCount = function() { return popupCount; };
-window.resetPopupCount = function() { popupCount = 0; };
-window.togglePopupBlocker = function(enabled) {
-    popupBlockerEnabled = enabled !== false;
-    console.log('Popup blocker ' + (popupBlockerEnabled ? 'enabled' : 'disabled'));
-};
-
-// ----- Also try to intercept clicks on the iframe to prevent popups -----
-// We can add a click listener on the iframe to prevent default actions?
-// Not directly, but we can try to add a blur event to close any popup.
-// We'll also add a mutation observer to detect new windows? Not possible.
+// ----- Stop Popup Killer -----
+function stopPopupKiller() {
+    if (popupKillerInterval) {
+        clearInterval(popupKillerInterval);
+        popupKillerInterval = null;
+    }
+}
 
 // ============================================
-// Player Functions
+// Player Functions (with activation/deactivation)
 // ============================================
 
 // ----- Open Player with IMDB -----
 async function openPlayerWithImdb(movieId, movieTitle) {
     var DOM = window.AppState.DOM;
     try {
+        // Activate popup blocker
+        isPlayerActive = true;
+        startPopupKiller();
+        console.log('🛡️ Popup blocker activated');
+
         showPlayerLoading();
         var url = API_BASE + '/movie/' + movieId + '?language=en-US';
         var response = await fetch(url, {
@@ -126,12 +131,21 @@ async function openPlayerWithImdb(movieId, movieTitle) {
         console.error('Error opening player:', error);
         hidePlayerLoading();
         showToast('Failed to load video. Please try again later.', 'error');
+        // Deactivate popup blocker on error
+        isPlayerActive = false;
+        stopPopupKiller();
+        console.log('🛡️ Popup blocker deactivated (error)');
     }
 }
 
 // ----- Open Player -----
 function openPlayer(movieId, movieTitle) {
     var DOM = window.AppState.DOM;
+    // Activate popup blocker
+    isPlayerActive = true;
+    startPopupKiller();
+    console.log('🛡️ Popup blocker activated');
+
     if (DOM.playerTitle) DOM.playerTitle.textContent = movieTitle || 'Now Playing';
     var embedUrl = 'https://autoembed.co/movie/tmdb/' + movieId;
     if (DOM.playerIframe) DOM.playerIframe.src = embedUrl;
@@ -142,7 +156,7 @@ function openPlayer(movieId, movieTitle) {
     showPlayerLoading();
 }
 
-// ----- Close Player -----
+// ----- Close Player (deactivate blocker) -----
 function closePlayer() {
     var DOM = window.AppState.DOM;
     if (DOM.playerModal) {
@@ -150,6 +164,11 @@ function closePlayer() {
         document.body.style.overflow = 'auto';
     }
     setTimeout(function() { if (DOM.playerIframe) DOM.playerIframe.src = ''; }, 300);
+    
+    // Deactivate popup blocker
+    isPlayerActive = false;
+    stopPopupKiller();
+    console.log('🛡️ Popup blocker deactivated');
 }
 
 // ----- Toggle Fullscreen -----
@@ -182,3 +201,9 @@ function hidePlayerLoading() {
     var DOM = window.AppState.DOM;
     if (DOM.playerLoading) DOM.playerLoading.style.display = 'none';
 }
+
+// ----- Cleanup on page unload -----
+window.addEventListener('beforeunload', function() {
+    isPlayerActive = false;
+    stopPopupKiller();
+});
