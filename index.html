@@ -6,11 +6,19 @@
     <meta name="theme-color" content="#141414">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>BlackHub - Your Movie Streaming Guide</title>
+    <title>MoviesHub - Your Movie Streaming Guide</title>
+    
+    <!-- SEO -->
+    <meta name="description" content="MoviesHub - Watch movies online for free. Stream the latest movies, TV shows, and more.">
+    <meta name="robots" content="index, follow">
     
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e50914'/%3E%3Ctext x='50' y='68' font-size='60' font-family='Arial' text-anchor='middle' fill='white' font-weight='bold'%3EBH%3C/text%3E%3C/svg%3E">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e50914'/%3E%3Ctext x='50' y='68' font-size='60' font-family='Arial' text-anchor='middle' fill='white' font-weight='bold'%3EMH%3C/text%3E%3C/svg%3E">
     
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="public/manifest.json">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -20,7 +28,7 @@
         <nav class="nav">
             <div class="logo">
                 <i class="fas fa-film" style="color: #e50914;"></i>
-                <span>Black<span style="color: #e50914;">Hub</span></span>
+                <span>Movies<span style="color: #e50914;">Hub</span></span>
             </div>
             
             <!-- Mobile Menu Toggle -->
@@ -52,7 +60,7 @@
     <!-- ===== HERO BANNER ===== -->
     <section class="hero" id="hero">
         <div class="hero-content">
-            <h1 id="heroTitle">Welcome to BlackHub</h1>
+            <h1 id="heroTitle">Welcome to MoviesHub</h1>
             <p id="heroDescription">Discover the best movies, create your watchlist, and track what you've watched.</p>
             <button class="hero-btn" id="browseBtn">
                 <i class="fas fa-play"></i> Browse Movies
@@ -220,7 +228,7 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h3>BlackHub</h3>
+                <h3>MoviesHub</h3>
                 <p>Your ultimate movie streaming guide. Discover, track, and enjoy movies.</p>
             </div>
             <div class="footer-section">
@@ -241,12 +249,27 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 BlackHub. All rights reserved. Data provided by TMDB.<br>A Product of <span class="brand">MINDS OF INTELLECTS</span></p>
+            <p>&copy; 2026 MoviesHub. All rights reserved. Data provided by TMDB.<br>A Product of <span class="brand">MINDS OF INTELLECTS</span></p>
         </div>
     </footer>
 
     <!-- ===== SCRIPTS ===== -->
     <script src="embed-config.js"></script>
     <script src="script.js"></script>
+    
+    <!-- ===== SERVICE WORKER REGISTRATION ===== -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('service-worker/sw.js')
+                    .then(function(reg) {
+                        console.log('✅ Service Worker registered successfully!');
+                    })
+                    .catch(function(err) {
+                        console.warn('⚠️ Service Worker registration failed:', err);
+                    });
+            });
+        }
+    </script>
 </body>
 </html>

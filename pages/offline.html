@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - MoviesHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --primary: #e50914;
+            --bg-primary: #141414;
+            --bg-secondary: #1a1a2e;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --text-muted: #737373;
+            --border-color: rgba(255,255,255,0.05);
+        }
+        [data-theme="light"] {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #ffffff;
+            --text-primary: #1a1a2e;
+            --text-secondary: #555;
+            --text-muted: #888;
+            --border-color: rgba(0,0,0,0.05);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.3s ease;
+        }
+        .offline-container { text-align: center; max-width: 500px; }
+        .offline-icon { font-size: 80px; margin-bottom: 24px; color: var(--primary); }
+        h1 { font-size: 32px; margin-bottom: 12px; }
+        p { color: var(--text-secondary); font-size: 16px; line-height: 1.6; margin-bottom: 24px; }
+        .btn {
+            display: inline-block;
+            padding: 12px 32px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        .btn:hover { transform: scale(1.05); }
+        .offline-movies { margin-top: 32px; text-align: left; }
+        .offline-movies h3 { color: var(--text-secondary); font-size: 14px; margin-bottom: 12px; }
+        .offline-movie {
+            background: var(--bg-secondary);
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border: 1px solid var(--border-color);
+        }
+        .offline-movie .title { flex: 1; font-weight: 500; }
+        .offline-movie .badge {
+            background: var(--primary);
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: #fff;
+        }
+        .footer-text { margin-top: 32px; font-size: 14px; color: var(--text-muted); }
+        .theme-toggle {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <div class="offline-container">
+        <div class="offline-icon"><i class="fas fa-wifi-slash"></i></div>
+        <h1>You're Offline</h1>
+        <p>It looks like you've lost your internet connection. Don't worry, you can still access your saved content!</p>
+        <button class="btn" onclick="location.reload()">
+            <i class="fas fa-sync"></i> Try Again
+        </button>
+
+        <div class="offline-movies" id="offlineMovies">
+            <h3>📁 Your Saved Content</h3>
+            <div id="savedContent">
+                <div class="offline-movie">
+                    <span class="title">Loading saved content...</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="footer-text">🎬 MoviesHub • Made with ❤️</p>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            const btn = document.querySelector('.theme-toggle i');
+            btn.className = next === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+
+        function loadSavedContent() {
+            const container = document.getElementById('savedContent');
+            const watchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
+            const history = JSON.parse(localStorage.getItem('watchHistory') || '{}');
+
+            if (watchlist.length === 0 && Object.keys(history).length === 0) {
+                container.innerHTML = `
+                    <div style="text-align:center; color: var(--text-muted); padding:20px;">
+                        <i class="fas fa-heart" style="font-size:24px; color: var(--primary);"></i>
+                        <p style="margin-top:8px;">No saved content yet. Start exploring!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            let count = 0;
+            const titles = {};
+
+            watchlist.forEach(id => {
+                titles[id] = `Movie ${id}`;
+            });
+
+            Object.keys(history).forEach(id => {
+                if (history[id] && history[id].title) {
+                    titles[id] = history[id].title;
+                }
+            });
+
+            const items = Object.keys(titles);
+            items.slice(0, 5).forEach(id => {
+                const saved = watchlist.includes(Number(id));
+                html += `
+                    <div class="offline-movie">
+                        <span class="title">${titles[id]}</span>
+                        ${saved ? '<span class="badge">Saved</span>' : ''}
+                    </div>
+                `;
+                count++;
+            });
+
+            if (items.length > 5) {
+                html += `<p style="color: var(--text-muted); font-size: 13px; text-align: center; margin-top: 8px;">And ${items.length - 5} more...</p>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Load theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const btn = document.querySelector('.theme-toggle i');
+        btn.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+
+        loadSavedContent();
+    </script>
+</body>
+</html>

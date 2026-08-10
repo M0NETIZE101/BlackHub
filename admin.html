@@ -3,13 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BlackHub - Admin Panel</title>
+    <title>MoviesHub - Admin Panel</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="admin-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Security: Prevent search engines from indexing admin page -->
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Security: Prevent page from being displayed in iframe -->
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    
     <style>
         /* ============================================
-           Admin Login Styles
+           Admin Login Styles (Enhanced)
            ============================================ */
         .admin-login {
             display: flex;
@@ -18,6 +25,12 @@
             min-height: 100vh;
             background: var(--bg-primary);
             padding: 20px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 999999;
         }
 
         .login-box {
@@ -27,7 +40,20 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             max-width: 400px;
             width: 100%;
-            box-shadow: var(--shadow);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-box::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(229, 9, 20, 0.05) 0%, transparent 60%);
+            pointer-events: none;
         }
 
         .login-box .logo {
@@ -35,6 +61,16 @@
             font-size: 28px;
             font-weight: 700;
             margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-box .logo i {
+            color: var(--primary);
+        }
+
+        .login-box .logo span:last-child {
+            color: var(--primary);
         }
 
         .login-box .subtitle {
@@ -42,10 +78,14 @@
             color: var(--text-secondary);
             font-size: 14px;
             margin-bottom: 32px;
+            position: relative;
+            z-index: 1;
         }
 
         .login-box .form-group {
             margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
         }
 
         .login-box .form-group label {
@@ -53,6 +93,7 @@
             font-size: 14px;
             color: var(--text-secondary);
             margin-bottom: 6px;
+            font-weight: 500;
         }
 
         .password-input-wrapper {
@@ -66,7 +107,7 @@
             padding: 12px 14px;
             padding-right: 48px;
             background: var(--bg-primary);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--border-color);
             border-radius: 8px;
             color: var(--text-primary);
             font-size: 16px;
@@ -76,6 +117,7 @@
         .password-input-wrapper input:focus {
             outline: none;
             border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.15);
         }
 
         .password-input-wrapper .toggle-password {
@@ -109,17 +151,21 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
+            position: relative;
+            z-index: 1;
         }
 
         .login-btn:hover {
             background: var(--primary-hover);
-            transform: scale(1.02);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(229, 9, 20, 0.3);
         }
 
         .login-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
         .login-error {
@@ -128,6 +174,8 @@
             text-align: center;
             margin-top: 12px;
             min-height: 20px;
+            position: relative;
+            z-index: 1;
         }
 
         .login-error.hidden {
@@ -139,6 +187,8 @@
             color: var(--text-muted);
             font-size: 12px;
             margin-top: 16px;
+            position: relative;
+            z-index: 1;
         }
 
         .lock-icon {
@@ -146,8 +196,17 @@
             color: var(--primary);
             text-align: center;
             margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+            animation: lockPulse 2s ease-in-out infinite;
         }
 
+        @keyframes lockPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Admin content wrapper */
         .admin-content-wrapper {
             display: none;
         }
@@ -158,7 +217,7 @@
 
         .logout-btn {
             background: none;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
             color: var(--text-secondary);
             padding: 6px 14px;
             border-radius: 6px;
@@ -184,34 +243,89 @@
             border-radius: 8px;
             border: 1px solid var(--primary);
             margin-top: 12px;
+            position: relative;
+            z-index: 1;
         }
 
         .lockout-message.hidden {
             display: none;
+        }
+
+        /* Security badge */
+        .security-badge {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 11px;
+            color: var(--text-muted);
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .security-badge i {
+            color: #46d369;
+        }
+
+        /* Session info */
+        .session-info {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Login attempts counter */
+        .attempts-counter {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-box {
+                padding: 30px 24px;
+                margin: 0 10px;
+            }
         }
     </style>
 </head>
 <body>
 
     <!-- ============================================ -->
-    <!-- ADMIN LOGIN PAGE                            -->
+    <!-- ADMIN LOGIN PAGE (Enhanced Security)        -->
     <!-- ============================================ -->
     <div class="admin-login" id="loginPage">
         <div class="login-box">
             <div class="lock-icon">
-                <i class="fas fa-lock"></i>
+                <i class="fas fa-shield-alt"></i>
             </div>
             <div class="logo">
-                <i class="fas fa-film" style="color: #e50914;"></i>
-                <span>Black<span style="color: #e50914;">Hub</span></span>
+                <i class="fas fa-film"></i>
+                <span>Movies<span>Hub</span></span>
             </div>
-            <div class="subtitle">Admin Panel Access</div>
+            <div class="subtitle">🔒 Admin Panel Access</div>
 
-            <form id="loginForm" autocomplete="off">
+            <form id="loginForm" autocomplete="off" novalidate>
                 <div class="form-group">
-                    <label for="passwordInput">Enter Password</label>
+                    <label for="passwordInput">
+                        <i class="fas fa-key" style="margin-right: 6px;"></i> Enter Password
+                    </label>
                     <div class="password-input-wrapper">
-                        <input type="password" id="passwordInput" placeholder="Enter admin password" autofocus>
+                        <input type="password" id="passwordInput" 
+                               placeholder="Enter admin password" 
+                               autofocus
+                               autocomplete="current-password"
+                               required
+                               aria-label="Admin password">
                         <button type="button" class="toggle-password" id="togglePassword" aria-label="Toggle password visibility">
                             <i class="fas fa-eye"></i>
                         </button>
@@ -222,11 +336,18 @@
                     <i class="fas fa-sign-in-alt"></i> Unlock Admin Panel
                 </button>
 
-                <div class="login-error" id="loginError"></div>
+                <div class="login-error hidden" id="loginError"></div>
                 <div class="lockout-message hidden" id="lockoutMessage">
                     <i class="fas fa-clock"></i> Too many failed attempts. Please wait 30 seconds.
                 </div>
+                <div class="attempts-counter" id="attemptsCounter"></div>
                 <div class="login-hint">🔒 Enter the admin password to continue</div>
+                <div class="security-badge">
+                    <i class="fas fa-check-circle"></i> Secure Connection
+                    <span style="color: var(--text-muted); margin: 0 4px;">•</span>
+                    <i class="fas fa-shield-alt"></i> Brute Force Protected
+                </div>
+                <div class="session-info" id="sessionInfo"></div>
             </form>
         </div>
     </div>
@@ -240,11 +361,13 @@
             <div class="admin-nav">
                 <div class="logo">
                     <i class="fas fa-film" style="color: #e50914;"></i>
-                    <span>Black<span style="color: #e50914;">Hub</span></span>
+                    <span>Movies<span style="color: #e50914;">Hub</span></span>
                     <span class="admin-badge">Admin</span>
                 </div>
                 <div class="admin-nav-links">
-                    <a href="index.html" target="_blank"><i class="fas fa-arrow-left"></i> Back to Site</a>
+                    <a href="index.html" target="_blank" rel="noopener noreferrer">
+                        <i class="fas fa-arrow-left"></i> Back to Site
+                    </a>
                     <button onclick="saveAllChanges()" class="save-btn">
                         <i class="fas fa-save"></i> Save All
                     </button>
@@ -306,9 +429,7 @@
                     <!-- Fallback Providers -->
                     <div class="provider-group">
                         <h3>Fallback Providers <span class="badge">Ordered by priority</span></h3>
-                        <div id="fallbackProviders">
-                            <!-- Fallback providers will be rendered here -->
-                        </div>
+                        <div id="fallbackProviders"></div>
                         <button onclick="addFallbackProvider()" class="add-btn">
                             <i class="fas fa-plus"></i> Add Fallback Provider
                         </button>
@@ -319,11 +440,7 @@
                 <section id="overrides" class="admin-section">
                     <h2><i class="fas fa-pen"></i> Custom Overrides</h2>
                     <p class="section-desc">Override embed URLs for specific movies.</p>
-
-                    <div class="override-list" id="overrideList">
-                        <!-- Overrides will be rendered here -->
-                    </div>
-
+                    <div class="override-list" id="overrideList"></div>
                     <button onclick="addOverride()" class="add-btn">
                         <i class="fas fa-plus"></i> Add Override
                     </button>
@@ -333,7 +450,6 @@
                 <section id="testing" class="admin-section">
                     <h2><i class="fas fa-vial"></i> Test URLs</h2>
                     <p class="section-desc">Test if embed URLs are working.</p>
-
                     <div class="test-container">
                         <div class="test-input-group">
                             <input type="text" id="testImdbId" placeholder="IMDB ID (e.g., tt1375666)">
@@ -341,9 +457,7 @@
                                 <i class="fas fa-play"></i> Test
                             </button>
                         </div>
-                        <div id="testResults" class="test-results">
-                            <!-- Test results will appear here -->
-                        </div>
+                        <div id="testResults" class="test-results"></div>
                     </div>
                 </section>
 
@@ -351,7 +465,6 @@
                 <section id="backup" class="admin-section">
                     <h2><i class="fas fa-download"></i> Backup & Restore</h2>
                     <p class="section-desc">Export or import your configuration.</p>
-
                     <div class="backup-actions">
                         <button onclick="exportConfig()" class="backup-btn">
                             <i class="fas fa-file-export"></i> Export Configuration

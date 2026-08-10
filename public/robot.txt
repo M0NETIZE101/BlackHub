@@ -1,0 +1,17 @@
+# Robots.txt for MoviesHub
+User-agent: *
+Allow: /
+
+# Disallow admin pages
+Disallow: /admin.html
+Disallow: /pages/admin.html
+
+# Disallow private data
+Disallow: /storage/
+Disallow: /config/
+
+# Crawl-delay for search engines
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: /sitemap.xml
