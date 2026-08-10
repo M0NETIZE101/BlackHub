@@ -1,8 +1,7 @@
 // ============================================
-// BlackHub - Embed Configuration
+// MoviesHub - Embed Configuration
 // ============================================
 
-// Embed providers configuration
 const EMBED_PROVIDERS = {
     primary: {
         name: 'Autoembed',
@@ -39,14 +38,86 @@ const EMBED_PROVIDERS = {
     customOverrides: {},
 };
 
-// Get the embed URL for a movie
-function getEmbedUrl(imdbId, tmdbId) {
+// ============================================
+// TV Show URL Builders
+// ============================================
+
+function getTvEmbedUrl(imdbId, tmdbId, season, episode) {
+    // Try primary provider first
+    const primary = EMBED_PROVIDERS.primary;
+    if (primary.enabled) {
+        // Autoembed doesn't support TV shows, so skip if primary is Autoembed
+        if (primary.name === 'Autoembed') {
+            // Try fallbacks for TV shows
+            for (const provider of EMBED_PROVIDERS.fallbacks) {
+                if (provider.enabled) {
+                    const url = buildTvUrl(provider, tmdbId, season, episode);
+                    if (url) return url;
+                }
+            }
+        } else {
+            const id = primary.type === 'imdb' ? imdbId : tmdbId;
+            if (id) {
+                return buildTvUrl(primary, tmdbId, season, episode) || primary.baseUrl + id;
+            }
+        }
+    }
+
+    // Try all fallbacks
+    for (const provider of EMBED_PROVIDERS.fallbacks) {
+        if (provider.enabled) {
+            const url = buildTvUrl(provider, tmdbId, season, episode);
+            if (url) return url;
+        }
+    }
+
+    return null;
+}
+
+function buildTvUrl(provider, tmdbId, season, episode) {
+    if (!tmdbId || !season || !episode) return null;
+
+    const name = provider.name.toLowerCase();
+    let baseUrl = provider.baseUrl;
+
+    // Handle different provider formats
+    if (name.includes('vidsrc')) {
+        return `https://vidsrc.to/embed/tv/${tmdbId}/${season}/${episode}`;
+    }
+    if (name.includes('2embed')) {
+        return `https://www.2embed.cc/embedtv/${tmdbId}/${season}/${episode}`;
+    }
+    if (name.includes('vidlink')) {
+        return `https://vidlink.pro/tv/${tmdbId}/${season}/${episode}`;
+    }
+    if (name.includes('vidfast')) {
+        return `https://vidfast.co/embed/tv/${tmdbId}/${season}/${episode}`;
+    }
+    if (name.includes('autoembed')) {
+        // Autoembed doesn't support TV shows directly
+        return null;
+    }
+
+    // Fallback: try to construct URL
+    return `${baseUrl}tv/${tmdbId}/${season}/${episode}`;
+}
+
+// ============================================
+// Get Embed URL (Unified)
+// ============================================
+
+function getEmbedUrl(imdbId, tmdbId, type = 'movie', season = null, episode = null) {
     // Check for custom override first
     if (imdbId && EMBED_PROVIDERS.customOverrides[imdbId]) {
         return EMBED_PROVIDERS.customOverrides[imdbId];
     }
 
-    // Use primary provider
+    // TV Show support
+    if (type === 'tv' && season && episode) {
+        return getTvEmbedUrl(imdbId, tmdbId, season, episode);
+    }
+
+    // Movie support
     const primary = EMBED_PROVIDERS.primary;
     if (primary.enabled) {
         const id = primary.type === 'imdb' ? imdbId : tmdbId;
@@ -55,7 +126,6 @@ function getEmbedUrl(imdbId, tmdbId) {
         }
     }
 
-    // Try fallback providers
     for (const provider of EMBED_PROVIDERS.fallbacks) {
         if (provider.enabled) {
             const id = provider.type === 'imdb' ? imdbId : tmdbId;
@@ -68,20 +138,10 @@ function getEmbedUrl(imdbId, tmdbId) {
     return null;
 }
 
-// Test if a provider URL is working
-async function testProviderUrl(url) {
-    try {
-        const response = await fetch(url, {
-            method: 'HEAD',
-            mode: 'no-cors',
-        });
-        return true;
-    } catch (error) {
-        return false;
-    }
-}
+// ============================================
+// Get Enabled Providers
+// ============================================
 
-// Get all enabled providers
 function getEnabledProviders() {
     const providers = [];
     
@@ -104,7 +164,10 @@ function getEnabledProviders() {
     return providers;
 }
 
-// Save configuration to localStorage
+// ============================================
+// Save / Load Configuration
+// ============================================
+
 function saveEmbedConfig(config) {
     try {
         localStorage.setItem('embedConfig', JSON.stringify(config));
@@ -116,7 +179,6 @@ function saveEmbedConfig(config) {
     }
 }
 
-// Load configuration from localStorage
 function loadEmbedConfig() {
     try {
         const saved = localStorage.getItem('embedConfig');
@@ -131,58 +193,33 @@ function loadEmbedConfig() {
     return false;
 }
 
-// Reset configuration to defaults
-function resetEmbedConfig() {
-    EMBED_PROVIDERS.primary = {
-        name: 'Autoembed',
-        baseUrl: 'https://autoembed.co/movie/imdb/',
-        type: 'imdb',
-        enabled: true,
-    };
-    EMBED_PROVIDERS.fallbacks = [
-        {
-            name: 'VidSrc',
-            baseUrl: 'https://vidsrc.to/embed/movie/',
-            type: 'tmdb',
-            enabled: true,
-        },
-        {
-            name: '2Embed',
-            baseUrl: 'https://www.2embed.cc/embed/movie/',
-            type: 'tmdb',
-            enabled: true,
-        },
-        {
-            name: 'VidLink',
-            baseUrl: 'https://vidlink.pro/movie/',
-            type: 'tmdb',
-            enabled: true,
-        },
-        {
-            name: 'VidFast',
-            baseUrl: 'https://vidfast.co/embed/movie/',
-            type: 'tmdb',
-            enabled: true,
-        },
-    ];
-    EMBED_PROVIDERS.customOverrides = {};
-    localStorage.removeItem('embedConfig');
-}
+// ============================================
+// Initialize
+// ============================================
 
-// Auto-load config on page load
 loadEmbedConfig();
 
-// Export for use in other files
+// ============================================
+// Exports
+// ============================================
+
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = {
         EMBED_PROVIDERS,
         getEmbedUrl,
-        testProviderUrl,
+        getTvEmbedUrl,
         getEnabledProviders,
         saveEmbedConfig,
         loadEmbedConfig,
-        resetEmbedConfig,
     };
 }
 
-console.log('✅ Embed config loaded successfully!');
+// Make globally available
+window.EMBED_PROVIDERS = EMBED_PROVIDERS;
+window.getEmbedUrl = getEmbedUrl;
+window.getTvEmbedUrl = getTvEmbedUrl;
+window.getEnabledProviders = getEnabledProviders;
+window.saveEmbedConfig = saveEmbedConfig;
+window.loadEmbedConfig = loadEmbedConfig;
+
+console.log('✅ Embed config loaded with TV Show support!');

@@ -108,7 +108,6 @@ body {
     font-size: 28px;
 }
 
-/* Light mode logo fix */
 [data-theme="light"] .logo {
     color: #1a1a2e;
 }
@@ -356,6 +355,7 @@ body {
     box-shadow: var(--shadow);
     aspect-ratio: 16/9;
     background: var(--bg-secondary);
+    min-height: 200px;
 }
 
 .hero-image img {
@@ -396,6 +396,44 @@ body {
     color: var(--text-secondary);
 }
 
+/* ----- Content Type Toggle ----- */
+.type-toggle {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.type-btn {
+    padding: 8px 22px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 30px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.type-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.type-btn.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
+.type-btn i {
+    font-size: 14px;
+}
+
 /* ----- Movies Section ----- */
 .movies-section {
     padding: 40px 4% 60px;
@@ -407,7 +445,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
     flex-wrap: wrap;
     gap: 16px;
 }
@@ -575,6 +613,37 @@ body {
     display: none;
 }
 
+/* Hide the rating display (star rating) in list view */
+.movies-grid.list-view .rating-display {
+    display: none;
+}
+
+/* Rating in title (for list view) */
+.rating-in-title {
+    font-weight: 400;
+    font-size: 14px;
+    color: #f5c518;
+    margin-left: 6px;
+}
+
+/* Grid view: hide rating in title, keep rating in meta */
+.movies-grid.grid-view .rating-in-title {
+    display: none;
+}
+
+/* List view: show rating in title, hide rating in meta */
+.movies-grid.list-view .rating-in-title {
+    display: inline;
+}
+
+/* Ensure title is inline-flex to keep rating next to title */
+.movies-grid.list-view .movie-title {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
 /* ----- Movie Card ----- */
 .movie-card {
     background: var(--bg-secondary);
@@ -610,25 +679,45 @@ body {
     transform: scale(1.05);
 }
 
-/* Trending Badge */
-.trending-badge {
+/* Badges Container - Stack vertically */
+.badge-container {
     position: absolute;
     top: 10px;
     left: 10px;
-    background: var(--primary);
-    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    z-index: 2;
+    max-width: 80%;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     padding: 2px 10px;
     border-radius: 20px;
     font-size: 10px;
     font-weight: 600;
-    z-index: 2;
-    display: flex;
-    align-items: center;
-    gap: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
 }
 
-.trending-badge i {
-    font-size: 10px;
+.badge-tv {
+    background: #3b82f6;
+    color: #fff;
+}
+
+.badge-movie {
+    background: #8b5cf6;
+    color: #fff;
+}
+
+.badge-trending {
+    background: var(--primary);
+    color: #fff;
 }
 
 .movie-rating {
@@ -942,7 +1031,133 @@ body {
     50% { opacity: 0.7; }
 }
 
-/* ----- Modals ----- */
+/* ============================================
+   TV Show - Seasons & Episodes Modal
+   ============================================ */
+
+.seasons-container {
+    padding: 20px 0;
+}
+
+.season-item {
+    background: var(--bg-card);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.season-item:hover {
+    border-color: var(--primary);
+}
+
+.season-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.season-header:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.season-header .season-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.season-header .season-number {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-primary);
+}
+
+.season-header .season-name {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+
+.season-header .season-episodes {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.season-header .season-toggle {
+    color: var(--text-muted);
+    transition: var(--transition);
+    font-size: 14px;
+}
+
+.season-header .season-toggle.open {
+    transform: rotate(180deg);
+}
+
+.season-episodes-list {
+    display: none;
+    padding: 0 20px 20px;
+    gap: 8px;
+    flex-direction: column;
+}
+
+.season-episodes-list.open {
+    display: flex;
+}
+
+.episode-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 14px;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+
+.episode-item:hover {
+    border-color: var(--primary);
+    background: rgba(229, 9, 20, 0.05);
+}
+
+.episode-item .episode-number {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 60px;
+}
+
+.episode-item .episode-name {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.episode-item .episode-runtime {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.episode-item .episode-play {
+    color: var(--primary);
+    font-size: 18px;
+    opacity: 0;
+    transition: var(--transition);
+}
+
+.episode-item:hover .episode-play {
+    opacity: 1;
+}
+
+/* ============================================
+   Movie Detail Modal
+   ============================================ */
+
 .modal {
     display: none;
     position: fixed;
@@ -1228,7 +1443,10 @@ body {
     line-height: 1.5;
 }
 
-/* ----- Video Player Modal ----- */
+/* ============================================
+   Video Player Modal
+   ============================================ */
+
 .player-modal {
     display: none;
     position: fixed;
@@ -1902,6 +2120,15 @@ body {
         justify-content: flex-end;
     }
 
+    .type-toggle {
+        justify-content: center;
+    }
+    
+    .type-btn {
+        padding: 6px 16px;
+        font-size: 13px;
+    }
+
     .modal-content {
         margin: 20px auto;
     }
@@ -1937,6 +2164,33 @@ body {
 
     .review-header {
         gap: 8px;
+    }
+
+    .season-header {
+        padding: 12px 14px;
+        flex-wrap: wrap;
+    }
+
+    .season-header .season-name {
+        font-size: 13px;
+    }
+
+    .episode-item {
+        padding: 8px 12px;
+        flex-wrap: wrap;
+    }
+
+    .episode-item .episode-number {
+        min-width: 45px;
+        font-size: 12px;
+    }
+
+    .episode-item .episode-name {
+        font-size: 13px;
+    }
+
+    .episode-item .episode-runtime {
+        display: none;
     }
 
     .player-container {
@@ -2063,6 +2317,28 @@ body {
         font-size: 11px;
         padding: 3px 6px;
         min-width: 70px;
+    }
+
+    .type-btn {
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+
+    .season-header .season-number {
+        font-size: 14px;
+    }
+
+    .season-header .season-episodes {
+        font-size: 11px;
+    }
+
+    .episode-item .episode-number {
+        min-width: 35px;
+        font-size: 11px;
+    }
+
+    .episode-item .episode-name {
+        font-size: 12px;
     }
 
     .modal-title {

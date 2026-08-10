@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rijan Adhikari - Co-Owner, MoviesAndSeriesHub</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Profile Page Specific Styles */
+        .profile-container {
+            max-width: 800px;
+            margin: 100px auto 60px;
+            padding: 0 20px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 32px;
+            flex-wrap: wrap;
+        }
+
+        .profile-avatar {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: var(--shadow);
+            border: 3px solid var(--primary);
+        }
+
+        .profile-info {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .profile-info h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .profile-info .verified-badge {
+            color: #1d9bf0;
+            font-size: 20px;
+        }
+
+        .profile-info .username {
+            color: var(--text-secondary);
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .profile-info .bio {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .profile-stats {
+            display: flex;
+            gap: 32px;
+            margin: 16px 0;
+        }
+
+        .profile-stats .stat {
+            text-align: center;
+        }
+
+        .profile-stats .stat .number {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .profile-stats .stat .label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .follow-btn {
+            padding: 8px 24px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .follow-btn.instagram {
+            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            color: #fff;
+        }
+
+        .follow-btn.instagram:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 20px rgba(225, 48, 108, 0.4);
+        }
+
+        .follow-btn.threads {
+            background: #000;
+            color: #fff;
+            border: 1px solid #333;
+        }
+
+        .follow-btn.threads:hover {
+            background: #1a1a1a;
+            transform: scale(1.05);
+            border-color: var(--text-secondary);
+        }
+
+        .follow-btn i {
+            font-size: 18px;
+        }
+
+        /* Profile Tabs */
+        .profile-tabs {
+            display: flex;
+            gap: 0;
+            border-bottom: 1px solid var(--border-color);
+            margin: 32px 0 24px;
+        }
+
+        .profile-tabs .tab {
+            padding: 12px 24px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border-bottom: 2px solid transparent;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .profile-tabs .tab:hover {
+            color: var(--text-primary);
+        }
+
+        .profile-tabs .tab.active {
+            color: var(--text-primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* Profile Grid */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .profile-grid .grid-item {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 48px;
+            cursor: pointer;
+        }
+
+        .profile-grid .grid-item:hover {
+            transform: scale(1.03);
+            border-color: var(--primary);
+            box-shadow: var(--shadow);
+        }
+
+        .profile-grid .grid-item .placeholder-text {
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+        }
+
+        .profile-grid .grid-item .placeholder-text i {
+            display: block;
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 32px;
+            color: var(--primary);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .back-link:hover {
+            color: var(--primary-hover);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+                font-size: 48px;
+            }
+
+            .profile-info h1 {
+                font-size: 26px;
+                justify-content: center;
+            }
+
+            .profile-stats {
+                justify-content: center;
+                gap: 20px;
+            }
+
+            .profile-actions {
+                justify-content: center;
+            }
+
+            .profile-tabs {
+                justify-content: center;
+            }
+
+            .profile-tabs .tab {
+                padding: 10px 16px;
+                font-size: 13px;
+            }
+
+            .profile-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ===== HEADER ===== -->
+    <header class="header" id="header">
+        <nav class="nav">
+            <a href="index.html" class="logo">
+                <i class="fas fa-film" style="color: #e50914;"></i>
+                <span>Movies<span style="color: #e50914;">AndSeries</span>Hub</span>
+            </a>
+            
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <div class="nav-links" id="navLinks">
+                <a href="index.html" data-category="now_playing">Home</a>
+                <a href="index.html" data-category="popular">Popular</a>
+                <a href="index.html" data-category="top_rated">Top Rated</a>
+                <a href="index.html" data-category="upcoming">Upcoming</a>
+            </div>
+
+            <div class="header-actions">
+                <button id="themeToggle" class="theme-btn" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ===== PROFILE CONTENT ===== -->
+    <div class="profile-container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="profile-info">
+                <h1>
+                    Rijan Adhikari
+                    <span class="verified-badge"><i class="fas fa-check-circle"></i></span>
+                </h1>
+                <div class="username">@procodes444</div>
+                <p class="bio">
+                    🎬 Co-Owner of MoviesAndSeriesHub | 💻 Developer | 🚀 Tech Enthusiast<br>
+                    Building the future of entertainment, one stream at a time.
+                </p>
+                <div class="profile-stats">
+                    <div class="stat">
+                        <div class="number">1.2K</div>
+                        <div class="label">Followers</div>
+                    </div>
+                    <div class="stat">
+                        <div class="number">456</div>
+                        <div class="label">Following</div>
+                    </div>
+                    <div class="stat">
+                        <div class="number">89</div>
+                        <div class="label">Posts</div>
+                    </div>
+                </div>
+                <div class="profile-actions">
+                    <a href="https://www.instagram.com/procodes444/" target="_blank" class="follow-btn instagram">
+                        <i class="fab fa-instagram"></i> Follow on Instagram
+                    </a>
+                    <a href="https://www.threads.com/@procodes444?xmt=AQG0U5CkrOcbWQaxf9_zdd96sJ6fp8MlwASnu4Am-1_hTCw" target="_blank" class="follow-btn threads">
+                        <i class="fab fa-threads"></i> Follow on Threads
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Tabs -->
+        <div class="profile-tabs">
+            <button class="tab active" data-tab="posts">Posts</button>
+            <button class="tab" data-tab="about">About</button>
+            <button class="tab" data-tab="projects">Projects</button>
+        </div>
+
+        <!-- Tab Content: Posts -->
+        <div id="tab-posts" class="tab-content">
+            <div class="profile-grid">
+                <div class="grid-item">
+                    <div class="placeholder-text">
+                        <i class="fas fa-film"></i>
+                        MoviesAndSeriesHub
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <div class="placeholder-text">
+                        <i class="fas fa-code"></i>
+                        Dev Projects
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <div class="placeholder-text">
+                        <i class="fas fa-rocket"></i>
+                        Launch Day
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <div class="placeholder-text">
+                        <i class="fas fa-trophy"></i>
+                        Achievements
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <div class="placeholder-text">
+                        <i class="fas fa-users"></i>
+                        Team Meetup
+                    </div>
+                </div>
+                <div class="grid-item">
+                    <div class="placeholder-text">
+                        <i class="fas fa-star"></i>
+                        Featured
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab Content: About -->
+        <div id="tab-about" class="tab-content" style="display: none;">
+            <div style="background: var(--bg-secondary); border-radius: 12px; padding: 24px; border: 1px solid var(--border-color);">
+                <h3 style="margin-bottom: 12px;">About Rijan Adhikari</h3>
+                <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px;">
+                    Rijan Adhikari is a passionate developer, tech entrepreneur, and the co-owner of 
+                    <strong style="color: var(--text-primary);">MoviesAndSeriesHub</strong>. With a deep love for 
+                    entertainment and technology, Rijan has been instrumental in building the platform from 
+                    the ground up, ensuring that users get the best experience when streaming movies and TV shows.
+                </p>
+                <p style="color: var(--text-secondary); line-height: 1.8; margin-bottom: 16px;">
+                    As a developer, Rijan specializes in JavaScript, API integrations, and building 
+                    user-friendly interfaces. His vision is to make quality entertainment accessible to everyone, 
+                    and he continues to work on innovative features for MoviesAndSeriesHub.
+                </p>
+                <p style="color: var(--text-secondary); line-height: 1.8;">
+                    🎯 <strong style="color: var(--text-primary);">Mission:</strong> Revolutionize the way people 
+                    discover and enjoy movies and TV shows online.
+                </p>
+            </div>
+        </div>
+
+        <!-- Tab Content: Projects -->
+        <div id="tab-projects" class="tab-content" style="display: none;">
+            <div style="display: grid; gap: 16px;">
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color);">
+                    <h4 style="margin-bottom: 4px;">🎬 MoviesAndSeriesHub</h4>
+                    <p style="color: var(--text-secondary); font-size: 14px;">A complete streaming platform for movies and TV shows.</p>
+                </div>
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color);">
+                    <h4 style="margin-bottom: 4px;">💻 Embed Config System</h4>
+                    <p style="color: var(--text-secondary); font-size: 14px;">A powerful admin panel for managing video embed providers.</p>
+                </div>
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 20px; border: 1px solid var(--border-color);">
+                    <h4 style="margin-bottom: 4px;">🚀 API Integration Suite</h4>
+                    <p style="color: var(--text-secondary); font-size: 14px;">Seamless integration with TMDB API for rich metadata.</p>
+                </div>
+            </div>
+        </div>
+
+        <a href="index.html" class="back-link">← Back to Home</a>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer" style="margin-top:40px;">
+        <div class="footer-bottom">
+            <p>&copy; 2026 MoviesAndSeriesHub. All rights reserved.<br>A Product of <span class="brand">MINDS OF INTELLECTS</span></p>
+        </div>
+    </footer>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script>
+        // Theme toggle
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const btn = document.getElementById('themeToggle');
+            if (btn) {
+                btn.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            }
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const current = html.getAttribute('data-theme');
+            const next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            localStorage.setItem('theme', next);
+            const btn = document.getElementById('themeToggle');
+            if (btn) {
+                btn.innerHTML = next === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            }
+        }
+
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        loadTheme();
+
+        // Mobile menu toggle
+        const mobileToggle = document.getElementById('mobileMenuToggle');
+        const navLinks = document.getElementById('navLinks');
+        if (mobileToggle) {
+            mobileToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                navLinks.classList.toggle('open');
+                const icon = this.querySelector('i');
+                icon.classList.toggle('fa-bars');
+                icon.classList.toggle('fa-times');
+            });
+        }
+
+        // Tab switching
+        const tabs = document.querySelectorAll('.tab');
+        const contents = {
+            posts: document.getElementById('tab-posts'),
+            about: document.getElementById('tab-about'),
+            projects: document.getElementById('tab-projects')
+        };
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                tabs.forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const target = this.dataset.tab;
+                Object.keys(contents).forEach(key => {
+                    contents[key].style.display = key === target ? 'block' : 'none';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

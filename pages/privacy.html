@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - MoviesHub</title>
+    <title>Privacy Policy - MoviesAndSeriesHub</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -54,21 +54,43 @@
         }
         .header-simple .logo i { color: var(--primary); }
         .header-simple .logo span:last-child { color: var(--primary); }
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            z-index: 100;
+            transition: var(--transition);
+        }
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: #fff;
+        }
     </style>
 </head>
 <body>
     <header class="header-simple">
         <a href="../index.html" class="logo">
             <i class="fas fa-film"></i>
-            <span>Movies<span>Hub</span></span>
+            <span>Movies<span>AndSeries</span>Hub</span>
         </a>
     </header>
+
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+    </button>
 
     <div class="privacy-container">
         <h1>Privacy Policy</h1>
         <p class="last-updated">Last Updated: January 2026</p>
 
-        <p>At MoviesHub, we take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your information.</p>
+        <p>At MoviesAndSeriesHub, we take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your information.</p>
 
         <h2>1. Information We Collect</h2>
         <p>We collect minimal information to provide our service:</p>
@@ -87,9 +109,9 @@
         </ul>
 
         <h2>3. Third-Party Services</h2>
-        <p>MoviesHub uses third-party services for video streaming and movie data:</p>
+        <p>MoviesAndSeriesHub uses third-party services for video streaming and movie data:</p>
         <ul>
-            <li><strong>TMDB API:</strong> Provides movie metadata. Their privacy policy applies.</li>
+            <li><strong>TMDB API:</strong> Provides movie and TV show metadata. Their privacy policy applies.</li>
             <li><strong>Embed Providers:</strong> Autoembed.co, VidSrc, 2Embed.cc, etc. Their privacy policies apply.</li>
             <li><strong>Font Awesome:</strong> Provides icons. Their privacy policy applies.</li>
         </ul>
@@ -107,15 +129,32 @@
         <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page.</p>
 
         <h2>8. Contact Us</h2>
-        <p>If you have any questions about this Privacy Policy, please contact us at: <strong>privacy@movieshub.com</strong></p>
+        <p>If you have any questions about this Privacy Policy, please contact us at: <strong>privacy@moviesandserieshub.com</strong></p>
 
         <a href="../index.html" class="back-link">← Back to Home</a>
     </div>
 
     <footer class="footer" style="margin-top:0; padding-bottom:80px;">
         <div class="footer-bottom">
-            <p>&copy; 2026 MoviesHub. All rights reserved.</p>
+            <p>&copy; 2026 MoviesAndSeriesHub. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            const btn = document.querySelector('.theme-toggle i');
+            btn.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const btn = document.querySelector('.theme-toggle i');
+        btn.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    </script>
 </body>
 </html>

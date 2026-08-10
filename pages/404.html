@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Not Found - MoviesHub</title>
+    <title>Page Not Found - MoviesAndSeriesHub</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -152,6 +152,24 @@
         .header-simple .logo span:last-child {
             color: var(--primary);
         }
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            z-index: 100;
+            transition: var(--transition);
+        }
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -159,10 +177,14 @@
         <nav style="max-width:1440px;margin:0 auto;">
             <a href="../index.html" class="logo">
                 <i class="fas fa-film"></i>
-                <span>Movies<span>Hub</span></span>
+                <span>Movies<span>AndSeries</span>Hub</span>
             </a>
         </nav>
     </header>
+
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+    </button>
 
     <div class="error-container" style="margin-top:68px;">
         <div class="error-content">
@@ -202,5 +224,23 @@
             </div>
         </div>
     </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            const btn = document.querySelector('.theme-toggle i');
+            btn.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const btn = document.querySelector('.theme-toggle i');
+        btn.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    </script>
 </body>
 </html>

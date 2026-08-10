@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms of Service - MoviesHub</title>
+    <title>Terms of Service - MoviesAndSeriesHub</title>
     <link rel="stylesheet" href="../style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -55,27 +55,49 @@
         }
         .header-simple .logo i { color: var(--primary); }
         .header-simple .logo span:last-child { color: var(--primary); }
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 14px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 18px;
+            z-index: 100;
+            transition: var(--transition);
+        }
+        .theme-toggle:hover {
+            background: var(--primary);
+            color: #fff;
+        }
     </style>
 </head>
 <body>
     <header class="header-simple">
         <a href="../index.html" class="logo">
             <i class="fas fa-film"></i>
-            <span>Movies<span>Hub</span></span>
+            <span>Movies<span>AndSeries</span>Hub</span>
         </a>
     </header>
+
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+    </button>
 
     <div class="terms-container">
         <h1>Terms of Service</h1>
         <p class="last-updated">Last Updated: January 2026</p>
 
-        <p>Welcome to MoviesHub! By using our service, you agree to the following terms and conditions.</p>
+        <p>Welcome to MoviesAndSeriesHub! By using our service, you agree to the following terms and conditions.</p>
 
         <h2>1. Acceptance of Terms</h2>
-        <p>By accessing and using MoviesHub, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.</p>
+        <p>By accessing and using MoviesAndSeriesHub, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.</p>
 
         <h2>2. Description of Service</h2>
-        <p>MoviesHub is a movie streaming platform that provides access to movie metadata and video streams from third-party providers. We do not host any video content ourselves.</p>
+        <p>MoviesAndSeriesHub is a movie and TV show streaming platform that provides access to metadata and video streams from third-party providers. We do not host any video content ourselves.</p>
 
         <h2>3. User Responsibilities</h2>
         <ul>
@@ -86,23 +108,23 @@
         </ul>
 
         <h2>4. Content Disclaimer</h2>
-        <p><span class="highlight">IMPORTANT:</span> MoviesHub does not host or store any video content. All video streams are provided by third-party services. We do not control or take responsibility for the content provided by these third parties.</p>
+        <p><span class="highlight">IMPORTANT:</span> MoviesAndSeriesHub does not host or store any video content. All video streams are provided by third-party services. We do not control or take responsibility for the content provided by these third parties.</p>
 
         <h2>5. Intellectual Property</h2>
         <ul>
-            <li>Movie data is provided by TMDB and is subject to their terms</li>
+            <li>Movie and TV show data is provided by TMDB and is subject to their terms</li>
             <li>Video streams are provided by third-party services</li>
-            <li>MoviesHub's design and code are our intellectual property</li>
+            <li>MoviesAndSeriesHub's design and code are our intellectual property</li>
         </ul>
 
         <h2>6. Third-Party Links</h2>
         <p>Our service may contain links to third-party websites or services. We are not responsible for the content or practices of these third parties.</p>
 
         <h2>7. Disclaimer of Warranties</h2>
-        <p>MoviesHub is provided "as is" without any warranties. We do not guarantee that the service will be uninterrupted, error-free, or free from harmful components.</p>
+        <p>MoviesAndSeriesHub is provided "as is" without any warranties. We do not guarantee that the service will be uninterrupted, error-free, or free from harmful components.</p>
 
         <h2>8. Limitation of Liability</h2>
-        <p>To the fullest extent permitted by law, MoviesHub is not liable for any damages arising from your use of the service.</p>
+        <p>To the fullest extent permitted by law, MoviesAndSeriesHub is not liable for any damages arising from your use of the service.</p>
 
         <h2>9. Changes to Terms</h2>
         <p>We reserve the right to update these terms at any time. We will notify users of any changes by posting the new terms on this page.</p>
@@ -114,15 +136,32 @@
         <p>These terms are governed by the laws of your jurisdiction.</p>
 
         <h2>12. Contact Us</h2>
-        <p>If you have any questions about these Terms of Service, please contact us at: <strong>legal@movieshub.com</strong></p>
+        <p>If you have any questions about these Terms of Service, please contact us at: <strong>legal@moviesandserieshub.com</strong></p>
 
         <a href="../index.html" class="back-link">← Back to Home</a>
     </div>
 
     <footer class="footer" style="margin-top:0; padding-bottom:80px;">
         <div class="footer-bottom">
-            <p>&copy; 2026 MoviesHub. All rights reserved.</p>
+            <p>&copy; 2026 MoviesAndSeriesHub. All rights reserved.</p>
         </div>
     </footer>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            const btn = document.querySelector('.theme-toggle i');
+            btn.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        const btn = document.querySelector('.theme-toggle i');
+        btn.className = savedTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+    </script>
 </body>
 </html>

@@ -6,14 +6,14 @@
     <meta name="theme-color" content="#141414">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>MoviesHub - Your Movie Streaming Guide</title>
+    <title>MoviesAndSeriesHub - Your Movie & TV Streaming Guide</title>
     
     <!-- SEO -->
-    <meta name="description" content="MoviesHub - Watch movies online for free. Stream the latest movies, TV shows, and more.">
+    <meta name="description" content="MoviesAndSeriesHub - Watch movies and TV shows online for free. Stream the latest movies, TV series, and more.">
     <meta name="robots" content="index, follow">
     
     <!-- Favicon -->
-    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e50914'/%3E%3Ctext x='50' y='68' font-size='60' font-family='Arial' text-anchor='middle' fill='white' font-weight='bold'%3EMH%3C/text%3E%3C/svg%3E">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e50914'/%3E%3Ctext x='50' y='68' font-size='60' font-family='Arial' text-anchor='middle' fill='white' font-weight='bold'%3EMSH%3C/text%3E%3C/svg%3E">
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="public/manifest.json">
@@ -28,7 +28,7 @@
         <nav class="nav">
             <div class="logo">
                 <i class="fas fa-film" style="color: #e50914;"></i>
-                <span>Movies<span style="color: #e50914;">Hub</span></span>
+                <span>Movies<span style="color: #e50914;">AndSeries</span>Hub</span>
             </div>
             
             <!-- Mobile Menu Toggle -->
@@ -45,7 +45,7 @@
 
             <div class="header-actions">
                 <div class="search-container">
-                    <input type="text" id="searchInput" placeholder="Search movies..." class="search-input">
+                    <input type="text" id="searchInput" placeholder="Search movies or TV shows..." class="search-input">
                     <button id="searchBtn" class="search-btn">
                         <i class="fas fa-search"></i>
                     </button>
@@ -60,10 +60,10 @@
     <!-- ===== HERO BANNER ===== -->
     <section class="hero" id="hero">
         <div class="hero-content">
-            <h1 id="heroTitle">Welcome to MoviesHub</h1>
-            <p id="heroDescription">Discover the best movies, create your watchlist, and track what you've watched.</p>
+            <h1 id="heroTitle">Welcome to MoviesAndSeriesHub</h1>
+            <p id="heroDescription">Discover the best movies and TV shows, create your watchlist, and track what you've watched.</p>
             <button class="hero-btn" id="browseBtn">
-                <i class="fas fa-play"></i> Browse Movies
+                <i class="fas fa-play"></i> Browse Movies & TV
             </button>
         </div>
         <div class="hero-image" id="heroImage">
@@ -73,11 +73,11 @@
         </div>
     </section>
 
-    <!-- ===== MOVIES SECTION ===== -->
+    <!-- ===== MOVIES / TV SHOWS SECTION ===== -->
     <section class="movies-section">
         <div class="section-header">
             <div>
-                <h2 id="sectionTitle">Now Playing</h2>
+                <h2 id="sectionTitle">Now Playing & Airing Today</h2>
                 <div class="filter-container">
                     <select id="genreFilter" class="filter-select">
                         <option value="all">All Genres</option>
@@ -94,6 +94,9 @@
                         <option value="9648">Mystery</option>
                         <option value="10752">War</option>
                         <option value="37">Western</option>
+                        <option value="10759">Action & Adventure</option>
+                        <option value="10765">Sci-Fi & Fantasy</option>
+                        <option value="10768">War & Politics</option>
                     </select>
                     <select id="yearFilter" class="filter-select">
                         <option value="all">All Years</option>
@@ -123,8 +126,15 @@
             </div>
         </div>
 
+        <!-- NEW: Type Toggle (All / Movies / TV Shows) -->
+        <div class="type-toggle">
+            <button class="type-btn active" data-type="all">All</button>
+            <button class="type-btn" data-type="movie">Movies</button>
+            <button class="type-btn" data-type="tv">TV Shows</button>
+        </div>
+
         <div class="movies-grid grid-view" id="moviesGrid">
-            <!-- Movies will be dynamically loaded here -->
+            <!-- Movies/TV Shows will be dynamically loaded here -->
         </div>
 
         <div class="load-more-container">
@@ -134,12 +144,22 @@
         </div>
     </section>
 
-    <!-- ===== MOVIE DETAIL MODAL ===== -->
+    <!-- ===== MOVIE / TV SHOW DETAIL MODAL ===== -->
     <div class="modal" id="movieModal">
         <div class="modal-content">
             <span class="modal-close" id="modalClose">&times;</span>
             <div id="modalBody">
                 <!-- Modal content will be dynamically loaded -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SEASONS & EPISODES MODAL (TV Shows) ===== -->
+    <div class="modal" id="seasonsModal">
+        <div class="modal-content">
+            <span class="modal-close" id="seasonsModalClose">&times;</span>
+            <div id="seasonsBody">
+                <!-- Seasons and episodes will be dynamically loaded -->
             </div>
         </div>
     </div>
@@ -228,15 +248,21 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h3>MoviesHub</h3>
-                <p>Your ultimate movie streaming guide. Discover, track, and enjoy movies.</p>
+                <h3>MoviesAndSeriesHub</h3>
+                <p>Your ultimate movie and TV show streaming guide. Discover, track, and enjoy.</p>
             </div>
             <div class="footer-section">
                 <h4>Categories</h4>
                 <a href="#" data-category="now_playing">Now Playing</a>
-                <a href="#" data-category="popular">Popular</a>
+                <a href="#" data-category="popular">Popular Movies & TV</a>
                 <a href="#" data-category="top_rated">Top Rated</a>
                 <a href="#" data-category="upcoming">Upcoming</a>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <a href="pages/privacy.html">Privacy Policy</a>
+                <a href="pages/terms.html">Terms of Service</a>
+                <a href="pages/404.html">Help Center</a>
             </div>
             <div class="footer-section">
                 <h4>Follow Us</h4>
@@ -249,7 +275,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 MoviesHub. All rights reserved. Data provided by TMDB.<br>A Product of <span class="brand">MINDS OF INTELLECTS</span></p>
+            <p>&copy; 2026 MoviesAndSeriesHub. All rights reserved. Data provided by TMDB.<br>A Product of <span class="brand">MINDS OF INTELLECTS</span></p>
         </div>
     </footer>
 
