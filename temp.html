@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embed Tester - MoviesAndSeriesHub</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root {
+            --primary: #e50914;
+            --primary-hover: #f40612;
+            --bg-primary: #141414;
+            --bg-secondary: #1a1a2e;
+            --bg-card: #2a2a2a;
+            --bg-hover: #404040;
+            --text-primary: #fff;
+            --text-secondary: #b3b3b3;
+            --text-muted: #737373;
+            --border-color: rgba(255,255,255,0.05);
+            --shadow: 0 8px 32px rgba(0,0,0,0.8);
+            --transition: all 0.3s ease;
+        }
+        [data-theme="light"] {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #fff;
+            --bg-card: #e8e8e8;
+            --bg-hover: #d4d4d4;
+            --text-primary: #1a1a2e;
+            --text-secondary: #555;
+            --text-muted: #888;
+            --border-color: rgba(0,0,0,0.05);
+            --shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+        }
+        .header h1 { font-size: 24px; font-weight: 700; }
+        .header h1 i { color: var(--primary); }
+        .theme-btn {
+            padding: 8px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            cursor: pointer;
+            font-size: 18px;
+            transition: var(--transition);
+        }
+        .theme-btn:hover { background: var(--primary); color: #fff; }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 768px) { .controls { grid-template-columns: 1fr; } }
+
+        .control-group {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        .control-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+        .control-group input, .control-group select {
+            width: 100%;
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: var(--transition);
+        }
+        .control-group input:focus, .control-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .sandbox-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .sandbox-options label {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 400;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        .sandbox-options input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--primary);
+        }
+
+        .player-wrapper {
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 16/9;
+            margin-bottom: 24px;
+            border: 2px solid var(--border-color);
+        }
+        .player-wrapper iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .player-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-secondary);
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            pointer-events: none;
+            z-index: 10;
+            background: rgba(0,0,0,0.8);
+            padding: 30px 40px;
+            border-radius: 12px;
+        }
+        .player-loading .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #333;
+            border-top: 4px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .info-panel {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+        @media (max-width: 768px) { .info-panel { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 480px) { .info-panel { grid-template-columns: 1fr; } }
+
+        .info-box {
+            background: var(--bg-secondary);
+            padding: 16px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        .info-box h3 {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        .info-box .value {
+            font-size: 16px;
+            font-weight: 600;
+            word-break: break-all;
+        }
+        .info-box .value.success { color: #46d369; }
+        .info-box .value.error { color: var(--primary); }
+        .info-box .value.warning { color: #f5a623; }
+
+        .log-container {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            padding: 16px 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+        .log-container .log-entry {
+            padding: 2px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .log-container .log-entry .time { color: var(--text-muted); margin-right: 12px; }
+        .log-container .log-entry .info { color: #0071eb; }
+        .log-container .log-entry .success { color: #46d369; }
+        .log-container .log-entry .error { color: var(--primary); }
+        .log-container .log-entry .warning { color: #f5a623; }
+
+        .btn {
+            padding: 8px 20px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .btn:hover { background: var(--primary-hover); transform: scale(1.02); }
+        .btn-secondary {
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+        .btn-secondary:hover { background: var(--border-color); color: var(--text-primary); }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .badge-success { background: rgba(70,211,105,0.2); color: #46d369; }
+        .badge-error { background: rgba(229,9,20,0.2); color: #e50914; }
+        .badge-warning { background: rgba(245,166,35,0.2); color: #f5a623; }
+
+        .embed-providers {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .provider-btn {
+            padding: 10px 14px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .provider-btn:hover { border-color: var(--text-secondary); color: var(--text-primary); }
+        .provider-btn.active {
+            border-color: var(--primary);
+            color: var(--text-primary);
+            background: rgba(229,9,20,0.1);
+        }
+        .provider-btn .provider-name { display: block; font-weight: 600; margin-bottom: 2px; }
+        .provider-btn .provider-type { font-size: 11px; color: var(--text-muted); }
+
+        .sandbox-toggle-all {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+        .sandbox-toggle-all label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin: 0;
+        }
+        .sandbox-toggle-all input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+
+        .popup-blocker-section {
+            margin-top: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        .popup-blocker-section label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        .popup-blocker-section input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--primary);
+        }
+        .popup-blocker-section .popup-count {
+            margin-left: auto;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-primary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+        .footer-text {
+            margin-top: 20px;
+            padding: 12px 0;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 13px;
+            border-top: 1px solid var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-film"></i> Embed Tester</h1>
+            <div style="display:flex;gap:12px;align-items:center;">
+                <span style="font-size:13px;color:var(--text-muted);">Nuclear popup blocker</span>
+                <button class="theme-btn" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <!-- Provider Selection -->
+            <div class="control-group">
+                <label><i class="fas fa-bolt"></i> Embed Provider</label>
+                <div class="embed-providers" id="providerList"></div>
+                <div style="margin-top:8px;">
+                    <input type="text" id="customUrl" placeholder="Or enter custom URL..." style="width:100%;padding:8px 12px;background:var(--bg-card);border:1px solid var(--border-color);border-radius:6px;color:var(--text-primary);font-size:13px;">
+                </div>
+            </div>
+
+            <!-- Sandbox Settings + Popup Blocker -->
+            <div class="control-group">
+                <label><i class="fas fa-shield-alt"></i> Sandbox Settings</label>
+
+                <div class="sandbox-toggle-all">
+                    <label>
+                        <input type="checkbox" id="sandboxEnabled" checked onchange="toggleSandboxAll()">
+                        Enable Sandbox
+                    </label>
+                    <span style="font-size:12px;color:var(--text-muted);">(Disable to test without restrictions)</span>
+                </div>
+
+                <div class="sandbox-options" id="sandboxOptions">
+                    <label>
+                        <input type="checkbox" id="sandboxAllowScripts" checked>
+                        allow-scripts
+                    </label>
+                    <label>
+                        <input type="checkbox" id="sandboxAllowSameOrigin" checked>
+                        allow-same-origin
+                    </label>
+                    <label>
+                        <input type="checkbox" id="sandboxAllowForms">
+                        allow-forms
+                    </label>
+                    <label>
+                        <input type="checkbox" id="sandboxAllowPopups" disabled>
+                        allow-popups (disabled)
+                    </label>
+                    <label>
+                        <input type="checkbox" id="sandboxAllowModals">
+                        allow-modals
+                    </label>
+                    <label>
+                        <input type="checkbox" id="sandboxAllowTopNav" disabled>
+                        allow-top-navigation (disabled)
+                    </label>
+                    <!-- Remove allow-top-navigation-by-user-activation to be extra strict -->
+                    <label>
+                        <input type="checkbox" id="sandboxAllowTopNavByUser">
+                        allow-top-navigation-by-user-activation (disabled)
+                    </label>
+                    <label>
+                        <input type="checkbox" id="sandboxAllowPresentation">
+                        allow-presentation
+                    </label>
+                </div>
+
+                <!-- Popup Blocker Section -->
+                <div class="popup-blocker-section">
+                    <label>
+                        <input type="checkbox" id="enablePopupBlocker" checked onchange="togglePopupBlocker()">
+                        <i class="fas fa-ban" style="color:var(--primary);"></i> Enable Popup Blocker
+                        <span class="popup-count" id="popupCounter">0 blocked</span>
+                    </label>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:4px;">
+                        Blocks window.open, kills popups every 300ms, and prevents focus-stealing
+                    </div>
+                </div>
+
+                <div class="actions" style="margin-top:12px;">
+                    <button class="btn" onclick="applySandboxAndReload()">
+                        <i class="fas fa-sync"></i> Apply & Reload
+                    </button>
+                    <button class="btn btn-secondary" onclick="resetSandbox()">
+                        <i class="fas fa-undo"></i> Reset Default
+                    </button>
+                    <button class="btn btn-secondary" onclick="testPopupBlock()">
+                        <i class="fas fa-shield"></i> Test Popup
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearPopupCounter()">
+                        <i class="fas fa-eraser"></i> Reset Counter
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Player -->
+        <div class="player-wrapper" id="playerWrapper">
+            <iframe id="playerIframe"
+                src=""
+                width="100%"
+                height="100%"
+                frameborder="0"
+                allowfullscreen
+                allow="autoplay; encrypted-media; fullscreen"
+                loading="lazy">
+            </iframe>
+            <div class="player-loading" id="playerLoading" style="display:flex;">
+                <div class="spinner"></div>
+                <span>Select a provider or enter URL...</span>
+            </div>
+        </div>
+
+        <!-- Info Panel -->
+        <div class="info-panel">
+            <div class="info-box">
+                <h3><i class="fas fa-info-circle"></i> Current Status</h3>
+                <div id="statusInfo">
+                    <div class="value warning">No embed loaded</div>
+                </div>
+            </div>
+            <div class="info-box">
+                <h3><i class="fas fa-shield"></i> Sandbox String</h3>
+                <div id="sandboxInfo">
+                    <div class="value" style="font-size:13px;word-break:break-all;">Not set</div>
+                </div>
+            </div>
+            <div class="info-box">
+                <h3><i class="fas fa-chart-line"></i> Popup Attempts</h3>
+                <div id="popupInfo">
+                    <div class="value">0</div>
+                </div>
+            </div>
+            <div class="info-box">
+                <h3><i class="fas fa-cog"></i> Popup Blocker</h3>
+                <div id="blockerStatus">
+                    <div class="value success">Active (300ms)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Log -->
+        <div class="log-container" id="logContainer">
+            <div style="color:var(--text-muted);font-size:12px;margin-bottom:8px;">
+                <i class="fas fa-terminal"></i> Console Log
+            </div>
+            <div id="logEntries">
+                <div class="log-entry">
+                    <span class="time">[System]</span>
+                    <span class="info">Ready for testing. Select a provider to begin.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-text">
+            MoviesAndSeriesHub Embed Tester &copy; 2026
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // Configuration
+        // ============================================
+
+        var PROVIDERS = [
+            { id: 'vidsrc', name: 'VidSrc', url: 'https://vidsrc.to/embed/movie/', type: 'tmdb', adFree: true },
+            { id: '2embed', name: '2Embed', url: 'https://www.2embed.cc/embed/movie/', type: 'tmdb', adFree: false },
+            { id: 'vidlink', name: 'VidLink', url: 'https://vidlink.pro/movie/', type: 'tmdb', adFree: false },
+            { id: 'vidfast', name: 'VidFast', url: 'https://vidfast.co/embed/movie/', type: 'tmdb', adFree: false },
+            { id: 'autoembed', name: 'Autoembed', url: 'https://autoembed.co/movie/imdb/', type: 'imdb', adFree: false },
+        ];
+
+        var TEST_IDS = { tmdb: '634649', imdb: 'tt10872600' };
+
+        var currentProvider = null;
+        var logCounter = 0;
+        var popupCount = 0;
+        var popupBlockerEnabled = true;
+        var popupKillerInterval = null;
+
+        // ============================================
+        // DOM References
+        // ============================================
+
+        var playerIframe = document.getElementById('playerIframe');
+        var playerLoading = document.getElementById('playerLoading');
+        var providerList = document.getElementById('providerList');
+        var customUrl = document.getElementById('customUrl');
+        var statusInfo = document.getElementById('statusInfo');
+        var sandboxInfo = document.getElementById('sandboxInfo');
+        var popupInfo = document.getElementById('popupInfo');
+        var blockerStatus = document.getElementById('blockerStatus');
+        var popupCounter = document.getElementById('popupCounter');
+        var logEntries = document.getElementById('logEntries');
+        var logContainer = document.getElementById('logContainer');
+
+        // ============================================
+        // Logging
+        // ============================================
+
+        function addLog(message, type) {
+            if (type === undefined) type = 'info';
+            logCounter++;
+            var time = new Date().toLocaleTimeString();
+            var entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.innerHTML = '<span class="time">[' + time + ']</span><span class="' + type + '">' + message + '</span>';
+            logEntries.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+            while (logEntries.children.length > 50) {
+                logEntries.removeChild(logEntries.firstChild);
+            }
+        }
+
+        // ============================================
+        // Render Providers
+        // ============================================
+
+        function renderProviders() {
+            providerList.innerHTML = '';
+            PROVIDERS.forEach(function(provider) {
+                var btn = document.createElement('button');
+                btn.className = 'provider-btn' + (currentProvider && currentProvider.id === provider.id ? ' active' : '');
+                btn.innerHTML = '<span class="provider-name">' + provider.name + '</span><span class="provider-type">' + provider.type + (provider.adFree ? ' ✅ Ad-Free' : ' 📢 Ads') + '</span>';
+                btn.addEventListener('click', function() {
+                    loadProvider(provider);
+                });
+                providerList.appendChild(btn);
+            });
+        }
+
+        // ============================================
+        // Load Provider
+        // ============================================
+
+        function loadProvider(provider) {
+            currentProvider = provider;
+            var movieId = provider.type === 'imdb' ? TEST_IDS.imdb : TEST_IDS.tmdb;
+            var embedUrl = provider.url + movieId;
+
+            document.querySelectorAll('.provider-btn').forEach(function(b) {
+                b.classList.toggle('active', b.querySelector('.provider-name').textContent === provider.name);
+            });
+
+            customUrl.value = embedUrl;
+            loadEmbed(embedUrl);
+            addLog('Loading ' + provider.name + ': ' + embedUrl, 'info');
+        }
+
+        // ============================================
+        // Load Custom URL
+        // ============================================
+
+        customUrl.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                var url = this.value.trim();
+                if (url) {
+                    loadEmbed(url);
+                    addLog('Loading custom URL: ' + url, 'info');
+                    document.querySelectorAll('.provider-btn').forEach(function(b) {
+                        b.classList.remove('active');
+                    });
+                    currentProvider = null;
+                }
+            }
+        });
+
+        // ============================================
+        // Load Embed
+        // ============================================
+
+        function loadEmbed(url) {
+            playerLoading.style.display = 'flex';
+            playerLoading.querySelector('span').textContent = 'Loading embed...';
+            applySandbox();
+            playerIframe.src = url;
+            updateStatus('Loading...', 'warning');
+        }
+
+        // ============================================
+        // Sandbox Controls
+        // ============================================
+
+        function getSandboxString() {
+            var enabled = document.getElementById('sandboxEnabled').checked;
+            if (!enabled) return null;
+
+            var options = [
+                { id: 'sandboxAllowScripts', value: 'allow-scripts' },
+                { id: 'sandboxAllowSameOrigin', value: 'allow-same-origin' },
+                { id: 'sandboxAllowForms', value: 'allow-forms' },
+                // allow-popups ALWAYS disabled
+                { id: 'sandboxAllowModals', value: 'allow-modals' },
+                // allow-top-navigation ALWAYS disabled
+                // allow-top-navigation-by-user-activation is disabled by default now
+                { id: 'sandboxAllowTopNavByUser', value: 'allow-top-navigation-by-user-activation' },
+                { id: 'sandboxAllowPresentation', value: 'allow-presentation' },
+            ];
+
+            var enabledOptions = options.filter(function(opt) {
+                return document.getElementById(opt.id).checked;
+            }).map(function(opt) {
+                return opt.value;
+            });
+
+            return enabledOptions.join(' ');
+        }
+
+        function applySandbox() {
+            var sandbox = getSandboxString();
+            if (sandbox !== null) {
+                playerIframe.setAttribute('sandbox', sandbox);
+                sandboxInfo.textContent = sandbox;
+                sandboxInfo.style.color = 'var(--text-primary)';
+                addLog('Sandbox applied: ' + sandbox, 'info');
+            } else {
+                playerIframe.removeAttribute('sandbox');
+                sandboxInfo.textContent = '(disabled - no restrictions)';
+                sandboxInfo.style.color = 'var(--text-muted)';
+                addLog('Sandbox disabled (no restrictions)', 'warning');
+            }
+        }
+
+        function applySandboxAndReload() {
+            applySandbox();
+            var currentSrc = playerIframe.src;
+            if (currentSrc && currentSrc !== 'about:blank') {
+                playerIframe.src = '';
+                setTimeout(function() {
+                    playerIframe.src = currentSrc;
+                    addLog('Reloaded with new sandbox settings', 'success');
+                }, 100);
+            } else {
+                addLog('No embed loaded to reload', 'warning');
+            }
+        }
+
+        function toggleSandboxAll() {
+            var enabled = document.getElementById('sandboxEnabled').checked;
+            var options = document.querySelectorAll('.sandbox-options input[type="checkbox"]');
+            options.forEach(function(cb) {
+                cb.disabled = !enabled;
+                if (!enabled) cb.checked = false;
+            });
+            // Re-disable popups and top-nav
+            document.getElementById('sandboxAllowPopups').disabled = true;
+            document.getElementById('sandboxAllowTopNav').disabled = true;
+            if (enabled) {
+                resetSandbox();
+            } else {
+                applySandboxAndReload();
+            }
+        }
+
+        function resetSandbox() {
+            var defaults = {
+                'sandboxAllowScripts': true,
+                'sandboxAllowSameOrigin': true,
+                'sandboxAllowForms': false,
+                'sandboxAllowModals': false,
+                'sandboxAllowTopNavByUser': false, // disabled by default
+                'sandboxAllowPresentation': false,
+            };
+
+            Object.keys(defaults).forEach(function(id) {
+                document.getElementById(id).checked = defaults[id];
+            });
+
+            document.getElementById('sandboxEnabled').checked = true;
+            document.querySelectorAll('.sandbox-options input[type="checkbox"]').forEach(function(cb) {
+                cb.disabled = false;
+            });
+            document.getElementById('sandboxAllowPopups').disabled = true;
+            document.getElementById('sandboxAllowTopNav').disabled = true;
+
+            applySandboxAndReload();
+            addLog('Sandbox reset to default settings (allow-popups and top-nav disabled)', 'info');
+        }
+
+        // ============================================
+        // Nuclear Popup Blocker
+        // ============================================
+
+        // Override window.open with extra checks
+        var originalOpen = window.open;
+
+        window.open = function(url, name, features) {
+            if (!popupBlockerEnabled) {
+                return originalOpen.call(window, url, name, features);
+            }
+
+            // Block any popup that is not a user-initiated about:blank
+            if (url && !url.startsWith('about:') && !url.startsWith('data:')) {
+                popupCount++;
+                popupInfo.textContent = popupCount;
+                popupCounter.textContent = popupCount + ' blocked';
+                addLog('🚫 Popup blocked (window.open): ' + url, 'error');
+                updateStatus('Popup was blocked!', 'error');
+                showPopupAlert('window.open');
+                return null;
+            }
+            return originalOpen.call(window, url, name, features);
+        };
+
+        // Popup killer interval - closes any popup that manages to open (every 200ms)
+        function startPopupKiller() {
+            if (popupKillerInterval) clearInterval(popupKillerInterval);
+            popupKillerInterval = setInterval(function() {
+                if (!popupBlockerEnabled) return;
+                try {
+                    // Try to close all windows that are not the main window
+                    // We can't enumerate all windows directly, but we can try to open a window with a known name and close it.
+                    // Instead, we'll try to close windows that are about:blank or have suspicious titles.
+                    var allWindows = window.open('', '_blank');
+                    if (allWindows && !allWindows.closed) {
+                        try {
+                            var winUrl = allWindows.location.href;
+                            if (winUrl && (winUrl === 'about:blank' || winUrl === 'about:blank#blocked')) {
+                                // Empty popup, close it
+                                allWindows.close();
+                                popupCount++;
+                                popupInfo.textContent = popupCount;
+                                popupCounter.textContent = popupCount + ' blocked';
+                                addLog('🚫 Empty popup killed', 'error');
+                                showPopupAlert('interval');
+                            }
+                        } catch(e) {
+                            // Cross-origin popup, can't access location, but we can still try to close it
+                            try {
+                                allWindows.close();
+                                popupCount++;
+                                popupInfo.textContent = popupCount;
+                                popupCounter.textContent = popupCount + ' blocked';
+                                addLog('🚫 Cross-origin popup killed', 'error');
+                                showPopupAlert('interval');
+                            } catch(e2) {}
+                        }
+                    }
+                } catch(e) { /* ignore */ }
+            }, 200); // Even faster!
+        }
+
+        function showPopupAlert(source) {
+            var wrapper = document.getElementById('playerWrapper');
+            var badge = document.createElement('div');
+            badge.style.cssText = 'position:absolute;top:10px;right:10px;background:#e50914;color:#fff;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;z-index:100;animation:fadeIn 0.3s ease;';
+            badge.textContent = '🚫 Popup Blocked';
+            wrapper.appendChild(badge);
+            setTimeout(function() { badge.remove(); }, 3000);
+        }
+
+        function togglePopupBlocker() {
+            popupBlockerEnabled = document.getElementById('enablePopupBlocker').checked;
+            if (popupBlockerEnabled) {
+                blockerStatus.innerHTML = '<div class="value success">Active (200ms)</div>';
+                addLog('Popup blocker enabled', 'success');
+                startPopupKiller();
+            } else {
+                blockerStatus.innerHTML = '<div class="value warning">Disabled</div>';
+                addLog('Popup blocker disabled', 'warning');
+                if (popupKillerInterval) {
+                    clearInterval(popupKillerInterval);
+                    popupKillerInterval = null;
+                }
+            }
+            updatePopupCounter();
+        }
+
+        function updatePopupCounter() {
+            popupCounter.textContent = popupCount + ' blocked';
+            popupInfo.textContent = popupCount;
+        }
+
+        function clearPopupCounter() {
+            popupCount = 0;
+            updatePopupCounter();
+            addLog('Popup counter reset', 'info');
+        }
+
+        function testPopupBlock() {
+            if (!popupBlockerEnabled) {
+                addLog('Popup blocker is disabled. Enable it first.', 'warning');
+                return;
+            }
+            var result = window.open('https://example.com/test-popup', '_blank');
+            if (!result || result.closed) {
+                addLog('✅ Popup blocked successfully', 'success');
+                updateStatus('Popup blocked successfully', 'success');
+            } else {
+                addLog('⚠️ Popup opened! Check blocker.', 'warning');
+                updateStatus('Popup opened - not blocked', 'warning');
+                try { result.close(); } catch(e) {}
+            }
+        }
+
+        // ============================================
+        // Status Updates
+        // ============================================
+
+        function updateStatus(message, type) {
+            var badgeMap = {
+                'success': 'badge-success',
+                'error': 'badge-error',
+                'warning': 'badge-warning',
+            };
+            var badgeClass = badgeMap[type] || '';
+            statusInfo.innerHTML = '<div class="value ' + type + '">' + message + (badgeClass ? '<span class="badge ' + badgeClass + '">' + type.toUpperCase() + '</span>' : '') + '</div>';
+        }
+
+        // ============================================
+        // Iframe Event Listeners
+        // ============================================
+
+        playerIframe.addEventListener('load', function() {
+            playerLoading.style.display = 'none';
+            var src = this.src;
+            if (src && src !== 'about:blank') {
+                updateStatus('Embed loaded successfully', 'success');
+                addLog('Embed loaded successfully', 'success');
+            } else {
+                updateStatus('No embed loaded', 'warning');
+            }
+        });
+
+        playerIframe.addEventListener('error', function() {
+            playerLoading.style.display = 'none';
+            updateStatus('Failed to load embed', 'error');
+            addLog('Failed to load embed', 'error');
+        });
+
+        // ============================================
+        // Theme Toggle
+        // ============================================
+
+        function toggleTheme() {
+            var html = document.documentElement;
+            var current = html.getAttribute('data-theme');
+            var next = current === 'light' ? 'dark' : 'light';
+            html.setAttribute('data-theme', next);
+            var btn = document.querySelector('.theme-btn i');
+            btn.className = next === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
+            localStorage.setItem('theme', next);
+        }
+
+        // ============================================
+        // Initialize
+        // ============================================
+
+        function init() {
+            var savedTheme = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            renderProviders();
+            document.getElementById('sandboxEnabled').checked = true;
+            document.querySelectorAll('.sandbox-options input[type="checkbox"]').forEach(function(cb) {
+                cb.disabled = false;
+            });
+            // Disable popups and top-nav permanently
+            document.getElementById('sandboxAllowPopups').disabled = true;
+            document.getElementById('sandboxAllowTopNav').disabled = true;
+            resetSandbox();
+            var defaultProvider = PROVIDERS.find(function(p) { return p.adFree; }) || PROVIDERS[0];
+            loadProvider(defaultProvider);
+            popupInfo.textContent = '0';
+            popupCounter.textContent = '0 blocked';
+            // Start popup killer
+            popupBlockerEnabled = true;
+            document.getElementById('enablePopupBlocker').checked = true;
+            blockerStatus.innerHTML = '<div class="value success">Active (200ms)</div>';
+            startPopupKiller();
+            addLog('Embed Tester initialized', 'success');
+            addLog('Popup blocker active with 200ms interval', 'success');
+            addLog('allow-popups, allow-top-navigation, and allow-top-navigation-by-user-activation disabled', 'info');
+            addLog('Test with different providers and sandbox settings', 'info');
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

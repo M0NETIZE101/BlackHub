@@ -1,147 +1,104 @@
 // ============================================
-// MoviesHub - Service Worker
-// Version: 2.0.0
+// MoviesAndSeriesHub - Service Worker
 // ============================================
 
-const CACHE_NAME = 'movieshub-v2';
+const CACHE_NAME = 'moviesandserieshub-v2';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
     '/style.css',
     '/script.js',
     '/embed-config.js',
-    '/admin.html',
-    '/admin-style.css',
     '/admin-script.js',
+    '/public/manifest.json',
     '/pages/404.html',
     '/pages/offline.html',
     '/pages/privacy.html',
     '/pages/terms.html',
-    '/public/manifest.json',
-    '/public/robots.txt',
+    '/pages/rijan.html'
 ];
 
-// ============================================
-// Install Event
-// ============================================
-
-self.addEventListener('install', event => {
+// Install event - cache core assets
+self.addEventListener('install', function(event) {
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then(cache => {
-                console.log('🔄 Service Worker: Caching assets');
-                return cache.addAll(ASSETS_TO_CACHE);
+            .then(function(cache) {
+                console.log('Opened cache');
+                // Cache only local assets, skip external URLs
+                return cache.addAll(ASSETS_TO_CACHE)
+                    .catch(function(err) {
+                        console.warn('Some assets failed to cache:', err);
+                        // Continue even if some fail
+                    });
             })
-            .then(() => self.skipWaiting())
+            .then(function() {
+                return self.skipWaiting();
+            })
     );
 });
 
-// ============================================
-// Activate Event
-// ============================================
-
-self.addEventListener('activate', event => {
+// Activate event - clean old caches
+self.addEventListener('activate', function(event) {
     event.waitUntil(
-        caches.keys().then(cacheNames => {
+        caches.keys().then(function(cacheNames) {
             return Promise.all(
-                cacheNames.map(cache => {
-                    if (cache !== CACHE_NAME) {
-                        console.log('🗑️ Service Worker: Removing old cache:', cache);
-                        return caches.delete(cache);
+                cacheNames.map(function(cacheName) {
+                    if (cacheName !== CACHE_NAME) {
+                        console.log('Deleting old cache:', cacheName);
+                        return caches.delete(cacheName);
                     }
                 })
             );
+        }).then(function() {
+            return self.clients.claim();
         })
-        .then(() => self.clients.claim())
     );
 });
 
-// ============================================
-// Fetch Event
-// ============================================
+// Fetch event - serve from cache, fallback to network
+self.addEventListener('fetch', function(event) {
+    var request = event.request;
+    var url = new URL(request.url);
 
-self.addEventListener('fetch', event => {
-    // Skip cross-origin requests
-    if (!event.request.url.startsWith(self.location.origin)) {
+    // Skip cross-origin requests (like via.placeholder.com, TMDB images, etc.)
+    if (url.origin !== self.location.origin) {
+        // Just fetch from network, don't cache
+        event.respondWith(fetch(request));
         return;
     }
 
-    // Skip API requests
-    if (event.request.url.includes('/api/')) {
-        return;
-    }
-
-    // Skip non-GET requests
-    if (event.request.method !== 'GET') {
-        return;
-    }
-
+    // For local assets, try cache first then network
     event.respondWith(
-        caches.match(event.request)
-            .then(cachedResponse => {
-                // Return cached response if available
-                if (cachedResponse) {
-                    return cachedResponse;
+        caches.match(request)
+            .then(function(response) {
+                if (response) {
+                    return response;
                 }
-
-                // Otherwise, fetch from network
-                return fetch(event.request)
-                    .then(response => {
-                        // Don't cache non-successful responses
-                        if (!response || response.status !== 200) {
-                            return response;
-                        }
-
-                        // Clone the response
-                        const responseToCache = response.clone();
-
-                        // Cache the response
-                        caches.open(CACHE_NAME)
-                            .then(cache => {
-                                cache.put(event.request, responseToCache);
-                            });
-
-                        return response;
-                    })
-                    .catch(() => {
-                        // Fallback for offline
+                return fetch(request).then(function(networkResponse) {
+                    // Don't cache non-200 responses
+                    if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+                        return networkResponse;
+                    }
+                    // Cache the fetched response for future
+                    var responseToCache = networkResponse.clone();
+                    caches.open(CACHE_NAME)
+                        .then(function(cache) {
+                            cache.put(request, responseToCache);
+                        })
+                        .catch(function(err) {
+                            console.warn('Could not cache:', request.url, err);
+                        });
+                    return networkResponse;
+                }).catch(function(error) {
+                    // If offline and asset is HTML, serve offline page
+                    if (request.headers.get('accept') && request.headers.get('accept').includes('text/html')) {
                         return caches.match('/pages/offline.html');
+                    }
+                    return new Response('Offline - content unavailable', {
+                        status: 503,
+                        statusText: 'Service Unavailable'
                     });
+                });
             })
     );
 });
-
-// ============================================
-// Push Notification (Optional)
-// ============================================
-
-self.addEventListener('push', event => {
-    const data = event.data ? event.data.json() : {};
-    const title = data.title || 'MoviesHub';
-    const options = {
-        body: data.body || 'New movies available!',
-        icon: data.icon || '/icon-192x192.png',
-        badge: data.badge || '/icon-192x192.png',
-        data: data.url || '/',
-        actions: [
-            { action: 'open', title: 'Open' },
-            { action: 'close', title: 'Close' }
-        ]
-    };
-
-    event.waitUntil(
-        self.registration.showNotification(title, options)
-    );
-});
-
-self.addEventListener('notificationclick', event => {
-    event.notification.close();
-
-    if (event.action === 'open') {
-        event.waitUntil(
-            clients.openWindow(event.notification.data)
-        );
-    }
-});
-
-console.log('✅ Service Worker initialized successfully!');
