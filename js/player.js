@@ -2,7 +2,7 @@
 // MoviesAndSeriesHub - Player Functions
 // ============================================
 
-// ----- Popup Blocker (Nuclear - 50ms interval) -----
+// ----- Popup Blocker (Nuclear - 50ms interval, SILENT) -----
 var popupBlockerEnabled = true;
 var popupCount = 0;
 var popupKillerInterval = null;
@@ -21,9 +21,7 @@ window.open = function(url, name, features) {
     if (url && !url.startsWith('about:') && !url.startsWith('data:')) {
         popupCount++;
         console.log('🚫 Popup blocked (window.open):', url);
-        if (typeof showToast === 'function') {
-            showToast('🚫 Popup blocked!', 'warning');
-        }
+        // SILENT: No toast notification or visual alert
         return null;
     }
     return originalOpen.call(window, url, name, features);
@@ -43,9 +41,6 @@ function startPopupKiller() {
                     blankWin.close();
                     popupCount++;
                     console.log('🚫 Empty popup killed');
-                    if (typeof showToast === 'function') {
-                        showToast('🚫 Popup blocked!', 'warning');
-                    }
                 } catch(e) {}
             }
 
@@ -58,9 +53,6 @@ function startPopupKiller() {
                         win.close();
                         popupCount++;
                         console.log('🚫 Closed window with name:', name);
-                        if (typeof showToast === 'function') {
-                            showToast('🚫 Popup blocked!', 'warning');
-                        }
                     }
                 } catch(e) {}
             });
@@ -72,9 +64,6 @@ function startPopupKiller() {
                     testWin.close();
                     popupCount++;
                     console.log('🚫 Closed test window');
-                    if (typeof showToast === 'function') {
-                        showToast('🚫 Popup blocked!', 'warning');
-                    }
                 }
             } catch(e) {}
         } catch(e) { /* ignore */ }
@@ -88,7 +77,7 @@ function stopPopupKiller() {
     }
 }
 
-// Expose for debugging
+// Expose for debugging (optional)
 window.getPopupCount = function() { return popupCount; };
 window.resetPopupCount = function() { popupCount = 0; };
 window.togglePopupBlocker = function(enabled) {
