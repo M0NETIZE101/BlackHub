@@ -4,26 +4,23 @@
 
 const EMBED_PROVIDERS = {
     primary: {
-       
-        
-             name: 'VidLink',
-            baseUrl: 'https://vidlink.pro/movie/',
-            type: 'tmdb',
-            enabled: true,
+        name: 'VidLink',
+        baseUrl: 'https://vidlink.pro/movie/',
+        type: 'tmdb',
+        enabled: true,
     },
     fallbacks: [
         {
-             name: 'VidSrc',
-        baseUrl: 'https://vidsrc.to/embed/movie/',
-        type: 'tmdb',
-        enabled: true,
+            name: 'VidSrc',
+            baseUrl: 'https://vidsrc.to/embed/movie/',
+            type: 'tmdb',
+            enabled: true,
         },
         {
             name: '2Embed',
             baseUrl: 'https://www.2embed.cc/embed/movie/',
             type: 'tmdb',
             enabled: true,
-            
         },
         {
             name: 'VidFast',
@@ -166,4 +163,4 @@ window.getEmbedUrl = getEmbedUrl;
 window.getTvEmbedUrl = getTvEmbedUrl;
 window.getEnabledProviders = getEnabledProviders;
 
-console.log('✅ Embed config loaded with TV Show support!');
+console.log('✅ Embed config loaded with TV Show support! (VidLink Primary)');

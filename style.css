@@ -1566,6 +1566,7 @@ body {
     color: #fff;
 }
 
+/* ----- PLAYER WRAPPER & OVERLAY ----- */
 .player-wrapper {
     flex: 1;
     position: relative;
@@ -1582,6 +1583,72 @@ body {
     border: none;
 }
 
+/* ----- PLAY OVERLAY ----- */
+.play-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: opacity 0.3s ease;
+    border-radius: 0;
+}
+
+.play-overlay:hover {
+    background: rgba(0, 0, 0, 0.85);
+}
+
+.play-overlay .play-icon {
+    width: 80px;
+    height: 80px;
+    background: var(--primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 36px;
+    color: #fff;
+    transition: var(--transition);
+    box-shadow: 0 0 40px rgba(229, 9, 20, 0.4);
+}
+
+.play-overlay:hover .play-icon {
+    transform: scale(1.1);
+    box-shadow: 0 0 60px rgba(229, 9, 20, 0.6);
+}
+
+.play-overlay .play-text {
+    margin-top: 16px;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+}
+
+.play-overlay .play-sub {
+    margin-top: 8px;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.play-overlay.loading .play-icon {
+    animation: pulse 1s ease-in-out infinite;
+}
+
+.play-overlay.loading .play-text {
+    color: var(--text-muted);
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+/* ----- Player Loading ----- */
 .player-loading {
     position: absolute;
     top: 50%;
@@ -1589,12 +1656,12 @@ body {
     transform: translate(-50%, -50%);
     color: #666;
     font-size: 16px;
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     gap: 12px;
     pointer-events: none;
-    z-index: 10;
+    z-index: 5;
 }
 
 .player-loading .spinner {
@@ -1606,6 +1673,7 @@ body {
     animation: spin 1s linear infinite;
 }
 
+/* ----- Player Controls ----- */
 .player-controls {
     display: flex;
     gap: 12px;
@@ -1830,7 +1898,7 @@ body {
     }
 }
 
-/* ----- Social Popup (Updated for Creator Cards) ----- */
+/* ----- Social Popup ----- */
 .social-popup {
     position: fixed;
     top: 0;
@@ -1862,7 +1930,7 @@ body {
     background: var(--bg-secondary);
     border-radius: 20px;
     padding: 40px 50px;
-    max-width: 450px;
+    max-width: 420px;
     width: 100%;
     text-align: center;
     position: relative;
@@ -1901,15 +1969,15 @@ body {
 }
 
 .social-popup-content h2 {
-    font-size: 28px;
+    font-size: 32px;
     font-weight: 700;
-    margin-bottom: 4px;
-    color: var(--text-primary);
+    margin-bottom: 8px;
+    color: #e50914;
 }
 
 .social-popup-content p {
-    font-size: 15px;
-    color: var(--text-secondary);
+    font-size: 16px;
+    color: #ffffff;
     line-height: 1.6;
 }
 
@@ -1992,8 +2060,7 @@ body {
     letter-spacing: 0.5px;
 }
 
-/* ----- CONTINUE WATCHING ROW ----- */
-
+/* ----- Continue Watching Row ----- */
 .continue-watching {
     max-width: 1440px;
     margin: 0 auto;
@@ -2377,6 +2444,20 @@ body {
         font-size: 12px;
     }
 
+    .play-overlay .play-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+    }
+
+    .play-overlay .play-text {
+        font-size: 16px;
+    }
+
+    .play-overlay .play-sub {
+        font-size: 12px;
+    }
+
     .mobile-bottom-nav {
         display: flex;
     }
@@ -2405,7 +2486,7 @@ body {
     }
 
     .social-popup-content h2 {
-        font-size: 24px;
+        font-size: 26px;
     }
 
     .back-to-top {

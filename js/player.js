@@ -2,18 +2,18 @@
 // MoviesAndSeriesHub - Player Functions
 // ============================================
 
-// ----- Popup Blocker (Active only when player is open) -----
-var popupBlockerEnabled = false; // disabled by default
+// ----- Popup Blocker (Nuclear - 50ms interval) -----
+var popupBlockerEnabled = true;
 var popupCount = 0;
 var popupKillerInterval = null;
 var isPlayerActive = false;
 
-// Override window.open (checks if player is active)
+// Override window.open
 var originalOpen = window.open;
 
 window.open = function(url, name, features) {
-    // Only block popups if the player is active
-    if (!isPlayerActive) {
+    // Only block popups when player is active
+    if (!isPlayerActive || !popupBlockerEnabled) {
         return originalOpen.call(window, url, name, features);
     }
 
@@ -29,28 +29,28 @@ window.open = function(url, name, features) {
     return originalOpen.call(window, url, name, features);
 };
 
-// ----- Start Popup Killer (only when player opens) -----
+// Start popup killer (every 50ms)
 function startPopupKiller() {
     if (popupKillerInterval) clearInterval(popupKillerInterval);
     popupKillerInterval = setInterval(function() {
-        if (!isPlayerActive) return;
+        if (!isPlayerActive || !popupBlockerEnabled) return;
 
         try {
-            // 1. Try to close the generic blank window
+            // 1. Close blank windows
             var blankWin = window.open('', '_blank');
             if (blankWin && !blankWin.closed && blankWin !== window) {
                 try {
                     blankWin.close();
                     popupCount++;
-                    console.log('🚫 Closed blank window');
+                    console.log('🚫 Empty popup killed');
                     if (typeof showToast === 'function') {
                         showToast('🚫 Popup blocked!', 'warning');
                     }
                 } catch(e) {}
             }
 
-            // 2. Try to close windows with common ad names
-            var commonNames = ['_blank', '_new', '_popup', 'ad', 'ads', 'popup', 'new', 'window', 'tab', 'open'];
+            // 2. Close windows with common ad names
+            var commonNames = ['_blank', '_new', '_popup', 'ad', 'ads', 'popup', 'new', 'window'];
             commonNames.forEach(function(name) {
                 try {
                     var win = window.open('', name);
@@ -65,7 +65,7 @@ function startPopupKiller() {
                 } catch(e) {}
             });
 
-            // 3. Try to close any window by checking window.opener
+            // 3. Additional aggressive check
             try {
                 var testWin = window.open('', 'testPopupWindow');
                 if (testWin && !testWin.closed && testWin !== window) {
@@ -77,12 +77,10 @@ function startPopupKiller() {
                     }
                 }
             } catch(e) {}
-
         } catch(e) { /* ignore */ }
     }, 50);
 }
 
-// ----- Stop Popup Killer -----
 function stopPopupKiller() {
     if (popupKillerInterval) {
         clearInterval(popupKillerInterval);
@@ -90,8 +88,16 @@ function stopPopupKiller() {
     }
 }
 
+// Expose for debugging
+window.getPopupCount = function() { return popupCount; };
+window.resetPopupCount = function() { popupCount = 0; };
+window.togglePopupBlocker = function(enabled) {
+    popupBlockerEnabled = enabled !== false;
+    console.log('Popup blocker ' + (popupBlockerEnabled ? 'enabled' : 'disabled'));
+};
+
 // ============================================
-// Player Functions (with activation/deactivation)
+// Player Functions (No Overlay)
 // ============================================
 
 // ----- Open Player with IMDB -----
@@ -120,40 +126,47 @@ async function openPlayerWithImdb(movieId, movieTitle) {
         }
         var embedUrl = getEmbedUrl(imdbId, movieId, 'movie');
         if (!embedUrl) throw new Error('No embed providers available');
-        if (DOM.playerTitle) DOM.playerTitle.textContent = movieTitle || movie.title;
-        if (DOM.playerIframe) DOM.playerIframe.src = embedUrl;
-        if (DOM.playerModal) {
-            DOM.playerModal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
+        
+        // Load video directly (no overlay)
+        loadVideoDirectly(embedUrl, movieTitle || movie.title);
         saveWatchHistory(movieId, movieTitle, 0, 'movie', movie.poster_path);
     } catch (error) {
         console.error('Error opening player:', error);
         hidePlayerLoading();
         showToast('Failed to load video. Please try again later.', 'error');
-        // Deactivate popup blocker on error
         isPlayerActive = false;
         stopPopupKiller();
-        console.log('🛡️ Popup blocker deactivated (error)');
     }
 }
 
-// ----- Open Player -----
+// ----- Load Video Directly (No Overlay) -----
+function loadVideoDirectly(embedUrl, title) {
+    var DOM = window.AppState.DOM;
+    if (DOM.playerTitle) DOM.playerTitle.textContent = title || 'Now Playing';
+    
+    // Set iframe src directly
+    DOM.playerIframe.src = embedUrl;
+    
+    // Show the player modal
+    if (DOM.playerModal) {
+        DOM.playerModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    // Show loading spinner
+    showPlayerLoading();
+}
+
+// ----- Open Player (fallback) -----
 function openPlayer(movieId, movieTitle) {
     var DOM = window.AppState.DOM;
-    // Activate popup blocker
     isPlayerActive = true;
     startPopupKiller();
     console.log('🛡️ Popup blocker activated');
 
     if (DOM.playerTitle) DOM.playerTitle.textContent = movieTitle || 'Now Playing';
-    var embedUrl = 'https://autoembed.co/movie/tmdb/' + movieId;
-    if (DOM.playerIframe) DOM.playerIframe.src = embedUrl;
-    if (DOM.playerModal) {
-        DOM.playerModal.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    }
-    showPlayerLoading();
+    var embedUrl = 'https://vidlink.pro/movie/' + movieId;
+    loadVideoDirectly(embedUrl, movieTitle);
 }
 
 // ----- Close Player (deactivate blocker) -----
@@ -163,7 +176,11 @@ function closePlayer() {
         DOM.playerModal.classList.remove('active');
         document.body.style.overflow = 'auto';
     }
-    setTimeout(function() { if (DOM.playerIframe) DOM.playerIframe.src = ''; }, 300);
+    setTimeout(function() { 
+        if (DOM.playerIframe) {
+            DOM.playerIframe.src = '';
+        }
+    }, 300);
     
     // Deactivate popup blocker
     isPlayerActive = false;
@@ -184,10 +201,13 @@ function toggleFullscreen() {
 // ----- Reload Player -----
 function reloadPlayer() {
     var DOM = window.AppState.DOM;
-    if (DOM.playerIframe) {
+    if (DOM.playerIframe && DOM.playerIframe.src) {
         var currentSrc = DOM.playerIframe.src;
         DOM.playerIframe.src = '';
-        setTimeout(function() { DOM.playerIframe.src = currentSrc; }, 100);
+        setTimeout(function() {
+            DOM.playerIframe.src = currentSrc;
+            showPlayerLoading();
+        }, 100);
     }
 }
 
@@ -202,8 +222,18 @@ function hidePlayerLoading() {
     if (DOM.playerLoading) DOM.playerLoading.style.display = 'none';
 }
 
-// ----- Cleanup on page unload -----
-window.addEventListener('beforeunload', function() {
-    isPlayerActive = false;
-    stopPopupKiller();
+// ----- Iframe Load Event -----
+document.addEventListener('DOMContentLoaded', function() {
+    var iframe = document.getElementById('playerIframe');
+    if (iframe) {
+        iframe.addEventListener('load', function() {
+            hidePlayerLoading();
+            console.log('✅ Video loaded successfully');
+        });
+        iframe.addEventListener('error', function() {
+            hidePlayerLoading();
+            console.log('❌ Video failed to load');
+            showToast('Failed to load video. Please try again.', 'error');
+        });
+    }
 });

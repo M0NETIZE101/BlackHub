@@ -1,0 +1,123 @@
+/* ============================================
+   TOASTS & SOCIAL POPUP
+   ============================================ */
+
+/* ----- Toast Notifications ----- */
+.toast-container {
+    position: fixed;
+    bottom: 80px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-width: 400px;
+}
+
+.toast {
+    padding: 12px 20px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border-left: 4px solid var(--primary);
+    color: var(--text-primary);
+    box-shadow: var(--shadow);
+    animation: slideIn 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+}
+
+.toast.success {
+    border-left-color: #46d369;
+}
+.toast.error {
+    border-left-color: var(--primary);
+}
+.toast.info {
+    border-left-color: #0071eb;
+}
+.toast.warning {
+    border-left-color: #f5a623;
+}
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* ----- Social Popup ----- */
+.social-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10001;
+    animation: popupFadeIn 0.3s ease;
+    backdrop-filter: blur(8px);
+    padding: 20px;
+}
+
+@keyframes popupFadeIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.social-popup-content {
+    background: var(--bg-secondary);
+    border-radius: 20px;
+    padding: 40px 50px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    position: relative;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow);
+    animation: popupBounce 0.5s ease;
+}
+
+@keyframes popupBounce {
+    0% { transform: scale(0.5); }
+    70% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.social-popup-close {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    transition: var(--transition);
+    background: none;
+    border: none;
+    padding: 4px 8px;
+}
+.social-popup-close:hover {
+    color: var(--text-primary);
+    transform: rotate(90deg);
+}
+
+.social-popup-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.social-popup-content h2 {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: #e50914;
+}
+
+.social-popup-content p {
+    font-size: 16px;
+    color: #ffffff;
+    line-height: 1.6;
+}

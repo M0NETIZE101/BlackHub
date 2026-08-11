@@ -1,0 +1,374 @@
+/* ============================================
+   RESPONSIVE - All Media Queries
+   ============================================ */
+
+/* ----- Touch Feedback (Mobile) ----- */
+@media (pointer: coarse) {
+    .movie-card:active {
+        transform: scale(0.97) !important;
+    }
+    .watch-btn:active,
+    .hero-btn:active,
+    .trailer-btn:active {
+        transform: scale(0.95) !important;
+    }
+    .mobile-bottom-nav a:active {
+        transform: scale(0.9);
+    }
+    .nav-links a {
+        padding: 8px 12px;
+    }
+    .search-container {
+        padding: 6px;
+    }
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* ----- Tablet / Small Desktop ----- */
+@media (max-width: 992px) {
+    .hero {
+        flex-direction: column;
+        text-align: center;
+        padding: 60px 4%;
+    }
+    .hero-content {
+        max-width: 100%;
+    }
+    .hero-image {
+        max-width: 100%;
+        width: 100%;
+        max-height: 300px;
+    }
+    .hero-content h1 {
+        font-size: 36px;
+    }
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 16px;
+    }
+    .continue-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+}
+
+/* ----- Mobile ----- */
+@media (max-width: 768px) {
+    .header {
+        padding: 10px 4%;
+    }
+    .nav {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .nav-links {
+        display: none;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        right: 0;
+        background: var(--bg-primary);
+        padding: 16px 20px;
+        flex-direction: column;
+        border-bottom: 1px solid var(--border-color);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    }
+    .nav-links.open {
+        display: flex;
+    }
+    .nav-links a {
+        padding: 10px 0;
+        font-size: 16px;
+        width: 100%;
+        text-align: center;
+    }
+    .mobile-menu-toggle {
+        display: block;
+    }
+    .header-actions {
+        flex: 1;
+        justify-content: flex-end;
+    }
+    .search-container {
+        width: 100%;
+    }
+    .search-input {
+        width: 100%;
+    }
+
+    .hero {
+        padding: 40px 4%;
+        min-height: auto;
+        gap: 20px;
+    }
+    .hero-content h1 {
+        font-size: 28px;
+    }
+    .hero-content p {
+        font-size: 14px;
+    }
+    .hero-image {
+        max-height: 200px;
+    }
+
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        gap: 12px;
+    }
+    .movies-grid.list-view .movie-card {
+        flex-direction: column;
+        padding: 12px;
+        align-items: center;
+        text-align: center;
+    }
+    .movies-grid.list-view .movie-card .poster-wrapper {
+        width: 100%;
+        max-width: 200px;
+        height: auto;
+        margin: 0 auto;
+    }
+    .movies-grid.list-view .movie-card .movie-title {
+        font-size: 18px;
+    }
+    .movies-grid.list-view .movie-card .movie-overview-text {
+        -webkit-line-clamp: 2;
+        font-size: 13px;
+    }
+
+    .continue-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 12px;
+    }
+    .continue-play-overlay {
+        font-size: 32px;
+    }
+
+    .filter-container {
+        width: 100%;
+    }
+    .filter-select {
+        flex: 1;
+        min-width: 80px;
+        font-size: 12px;
+        padding: 4px 8px;
+    }
+    .section-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .section-header h2 {
+        font-size: 20px;
+    }
+    .view-toggle {
+        justify-content: flex-end;
+    }
+    .type-toggle {
+        justify-content: center;
+    }
+    .type-btn {
+        padding: 6px 16px;
+        font-size: 13px;
+    }
+
+    .modal-content {
+        margin: 20px auto;
+    }
+    .modal-title {
+        font-size: 24px;
+    }
+    .modal-body {
+        padding: 0 16px 16px;
+    }
+    .modal-poster {
+        max-height: 200px;
+    }
+    .modal-details {
+        grid-template-columns: 1fr 1fr;
+    }
+    .cast-grid {
+        grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+        gap: 8px;
+    }
+    .cast-name {
+        font-size: 11px;
+    }
+    .cast-character {
+        font-size: 10px;
+    }
+    .review-header {
+        gap: 8px;
+    }
+
+    .season-header {
+        padding: 12px 14px;
+        flex-wrap: wrap;
+    }
+    .season-header .season-name {
+        font-size: 13px;
+    }
+    .episode-item {
+        padding: 8px 12px;
+        flex-wrap: wrap;
+    }
+    .episode-item .episode-number {
+        min-width: 45px;
+        font-size: 12px;
+    }
+    .episode-item .episode-name {
+        font-size: 13px;
+    }
+    .episode-item .episode-runtime {
+        display: none;
+    }
+
+    .player-container {
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+    .player-header h3 {
+        font-size: 14px;
+        max-width: 200px;
+    }
+    .player-controls button {
+        padding: 6px 12px;
+        font-size: 12px;
+    }
+
+    .mobile-bottom-nav {
+        display: flex;
+    }
+    .movies-section {
+        padding-bottom: 80px;
+    }
+    .footer {
+        padding-bottom: 80px;
+    }
+    .toast-container {
+        bottom: 90px;
+        left: 20px;
+        right: 20px;
+        max-width: 100%;
+    }
+    .social-popup-content {
+        padding: 30px 24px;
+    }
+    .social-popup-icon {
+        font-size: 48px;
+    }
+    .social-popup-content h2 {
+        font-size: 26px;
+    }
+    .back-to-top {
+        bottom: 80px;
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+}
+
+/* ----- Small Mobile ----- */
+@media (max-width: 480px) {
+    .logo {
+        font-size: 18px;
+    }
+    .logo i {
+        font-size: 20px;
+    }
+    .hero-content h1 {
+        font-size: 22px;
+    }
+    .hero-image {
+        max-height: 160px;
+    }
+
+    .movies-grid {
+        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+        gap: 8px;
+    }
+    .continue-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 8px;
+    }
+    .movie-title {
+        font-size: 13px;
+    }
+    .movie-meta {
+        font-size: 11px;
+    }
+    .movie-rating {
+        font-size: 10px;
+        padding: 2px 6px;
+    }
+    .watch-btn,
+    .trailer-btn {
+        font-size: 10px;
+        padding: 4px 10px;
+    }
+
+    .mobile-bottom-nav a {
+        font-size: 9px;
+        padding: 4px 8px;
+    }
+    .mobile-bottom-nav a i {
+        font-size: 18px;
+    }
+
+    .player-header h3 {
+        max-width: 120px;
+        font-size: 12px;
+    }
+    .player-controls {
+        padding: 8px 12px;
+        gap: 6px;
+    }
+    .player-controls button {
+        font-size: 11px;
+        padding: 4px 10px;
+    }
+
+    .filter-select {
+        font-size: 11px;
+        padding: 3px 6px;
+        min-width: 70px;
+    }
+    .type-btn {
+        padding: 5px 12px;
+        font-size: 12px;
+    }
+    .season-header .season-number {
+        font-size: 14px;
+    }
+    .season-header .season-episodes {
+        font-size: 11px;
+    }
+    .episode-item .episode-number {
+        min-width: 35px;
+        font-size: 11px;
+    }
+    .episode-item .episode-name {
+        font-size: 12px;
+    }
+    .modal-title {
+        font-size: 20px;
+    }
+    .modal-meta {
+        font-size: 12px;
+        gap: 10px;
+    }
+    .modal-details {
+        grid-template-columns: 1fr;
+    }
+    .social-popup-content {
+        padding: 24px 16px;
+    }
+    .social-popup-content h2 {
+        font-size: 20px;
+    }
+    .social-popup-icon {
+        font-size: 40px;
+    }
+}

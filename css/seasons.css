@@ -1,0 +1,109 @@
+/* ============================================
+   SEASONS & EPISODES (TV Shows)
+   ============================================ */
+
+.seasons-container {
+    padding: 20px 0;
+}
+
+.season-item {
+    background: var(--bg-card);
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+.season-item:hover {
+    border-color: var(--primary);
+}
+
+.season-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    cursor: pointer;
+    transition: var(--transition);
+}
+.season-header:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.season-header .season-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.season-header .season-number {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-primary);
+}
+.season-header .season-name {
+    color: var(--text-secondary);
+    font-size: 14px;
+}
+.season-header .season-episodes {
+    color: var(--text-muted);
+    font-size: 13px;
+}
+.season-header .season-toggle {
+    color: var(--text-muted);
+    transition: var(--transition);
+    font-size: 14px;
+}
+.season-header .season-toggle.open {
+    transform: rotate(180deg);
+}
+
+.season-episodes-list {
+    display: none;
+    padding: 0 20px 20px;
+    gap: 8px;
+    flex-direction: column;
+}
+.season-episodes-list.open {
+    display: flex;
+}
+
+.episode-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 10px 14px;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    border: 1px solid transparent;
+}
+.episode-item:hover {
+    border-color: var(--primary);
+    background: rgba(229, 9, 20, 0.05);
+}
+
+.episode-item .episode-number {
+    color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    min-width: 60px;
+}
+.episode-item .episode-name {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+.episode-item .episode-runtime {
+    color: var(--text-muted);
+    font-size: 12px;
+}
+.episode-item .episode-play {
+    color: var(--primary);
+    font-size: 18px;
+    opacity: 0;
+    transition: var(--transition);
+}
+.episode-item:hover .episode-play {
+    opacity: 1;
+}

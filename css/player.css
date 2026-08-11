@@ -1,0 +1,142 @@
+/* ============================================
+   PLAYER - Modal, Controls, Loading
+   ============================================ */
+
+.player-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 3000;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+.player-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-container {
+    width: 100%;
+    max-width: 1200px;
+    height: 90vh;
+    max-height: 800px;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.9);
+}
+
+.player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 20px;
+    background: #1a1a2e;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.player-header h3 {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.player-close {
+    background: none;
+    border: none;
+    color: #aaa;
+    font-size: 28px;
+    cursor: pointer;
+    padding: 0 8px;
+    transition: color 0.3s ease;
+    line-height: 1;
+}
+.player-close:hover {
+    color: #fff;
+}
+
+/* ----- Player Wrapper ----- */
+.player-wrapper {
+    flex: 1;
+    position: relative;
+    background: #000;
+    min-height: 0;
+}
+
+.player-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* ----- Player Loading ----- */
+.player-loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #666;
+    font-size: 16px;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    pointer-events: none;
+    z-index: 5;
+}
+
+.player-loading .spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #333;
+    border-top: 4px solid var(--primary);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* ----- Player Controls ----- */
+.player-controls {
+    display: flex;
+    gap: 12px;
+    padding: 12px 20px;
+    background: #1a1a2e;
+    border-top: 1px solid var(--border-color);
+    flex-shrink: 0;
+    flex-wrap: wrap;
+}
+
+.player-controls button {
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: #aaa;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.player-controls button:hover {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
