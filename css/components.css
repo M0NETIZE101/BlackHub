@@ -1,5 +1,5 @@
 /* ============================================
-   COMPONENTS - Cards, Badges, Buttons, Modals
+   COMPONENTS - Cards, Badges, Buttons, Modals, Mobile Nav
    ============================================ */
 
 /* ----- Movies Grid ----- */
@@ -527,3 +527,83 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.7; }
 }
+
+/* ============================================
+   MOBILE BOTTOM NAVIGATION
+   ============================================ */
+
+.mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    padding: 8px 0 env(safe-area-inset-bottom);
+    z-index: 100;
+    justify-content: space-around;
+    align-items: center;
+    backdrop-filter: blur(8px);
+}
+
+.mobile-bottom-nav a {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 10px;
+    padding: 4px 12px;
+    gap: 2px;
+    transition: var(--transition);
+    position: relative;
+}
+
+.mobile-bottom-nav a i {
+    font-size: 20px;
+    transition: var(--transition);
+}
+
+.mobile-bottom-nav a.active {
+    color: var(--primary);
+}
+
+.mobile-bottom-nav a.active i {
+    transform: scale(1.1);
+}
+
+.mobile-bottom-nav a.active::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 3px;
+    background: var(--primary);
+    border-radius: 2px;
+}
+
+.mobile-bottom-nav a:hover {
+    color: var(--text-primary);
+}
+
+/* Show mobile nav only on mobile */
+@media (max-width: 768px) {
+    .mobile-bottom-nav {
+        display: flex;
+    }
+}
+
+@media (max-width: 480px) {
+    .mobile-bottom-nav a {
+        font-size: 9px;
+        padding: 4px 8px;
+    }
+    .mobile-bottom-nav a i {
+        font-size: 18px;
+    }
+}
+
+/* ----- Remove underline animation for mobile nav link active state (already handled) ----- */
