@@ -1,6 +1,6 @@
 // ============================================
-// Landing page logic — no auto-redirect
-// Search + Watch Now only
+// Landing (Welcome) page — index.html
+// Search + Watch Now → navigates to landing.html (browse)
 // ============================================
 
 let hasEntered = false;
@@ -8,31 +8,28 @@ let hasEntered = false;
 document.addEventListener('DOMContentLoaded', function() {
     loadTrendingBackdrop();
 
-    // Watch Now
     var enterBtn = document.getElementById('landingEnterBtn');
     if (enterBtn) enterBtn.addEventListener('click', function() { enterSite(); });
 
-    // Search
     setupSearch();
 });
 
 // ============================================
-// Navigate to home (optionally with search query)
+// Navigate to browse page (landing.html)
 // ============================================
 function enterSite(query) {
     if (hasEntered) return;
     hasEntered = true;
-    localStorage.setItem('landingSeen', 'true');
 
     if (query && query.trim()) {
-        window.location.href = 'index.html?search=' + encodeURIComponent(query.trim());
+        window.location.href = 'landing.html?search=' + encodeURIComponent(query.trim());
     } else {
-        window.location.href = 'index.html';
+        window.location.href = 'landing.html';
     }
 }
 
 // ============================================
-// Search: desktop always-visible, mobile icon→expand
+// Search
 // ============================================
 function setupSearch() {
     var searchBox = document.getElementById('landingSearchBox');
@@ -42,14 +39,10 @@ function setupSearch() {
 
     if (!searchBox || !searchInput) return;
 
-    // Enter key → search
     searchInput.addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            enterSite(searchInput.value);
-        }
+        if (e.key === 'Enter') enterSite(searchInput.value);
     });
 
-    // Mobile: open search
     if (searchIconBtn) {
         searchIconBtn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -58,7 +51,6 @@ function setupSearch() {
         });
     }
 
-    // Mobile: close search
     if (searchCloseBtn) {
         searchCloseBtn.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -66,7 +58,6 @@ function setupSearch() {
         });
     }
 
-    // Collapse on outside click if empty
     document.addEventListener('click', function(e) {
         if (!searchBox.classList.contains('expanded')) return;
         if (searchBox.contains(e.target)) return;
@@ -74,7 +65,6 @@ function setupSearch() {
         collapseSearch();
     });
 
-    // Escape → collapse
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && searchBox.classList.contains('expanded')) {
             collapseSearch();
@@ -89,7 +79,7 @@ function setupSearch() {
 }
 
 // ============================================
-// Trending backdrop + grid
+// Trending
 // ============================================
 async function loadTrendingBackdrop() {
     try {
