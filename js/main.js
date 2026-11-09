@@ -44,10 +44,19 @@ document.addEventListener('DOMContentLoaded', function() {
     loadTheme();
     loadViewPreference();
     
-    // Load genres then content
+    // ----- Load genres then content OR search -----
     loadGenresFromTMDB().then(function() {
         populateGenreDropdown();
-        loadContent('now_playing');
+
+        // If we arrived with ?search= from landing page, run search.
+        // Otherwise show default category.
+        var incomingSearch = getIncomingSearchQuery();
+        if (incomingSearch) {
+            if (DOM.searchInput) DOM.searchInput.value = incomingSearch;
+            performSearch(incomingSearch, 1);
+        } else {
+            loadContent('now_playing');
+        }
     });
     
     // ----- Setup event listeners -----
@@ -61,6 +70,18 @@ document.addEventListener('DOMContentLoaded', function() {
         DOM.loadMoreBtn.style.display = 'none';
     }
 });
+
+// ----- Read ?search= from URL (used by landing page) -----
+function getIncomingSearchQuery() {
+    try {
+        var params = new URLSearchParams(window.location.search);
+        var q = params.get('search');
+        if (q && q.trim()) return q.trim();
+    } catch (e) {
+        console.warn('Could not parse URL search param:', e);
+    }
+    return null;
+}
 
 // ----- Setup Event Listeners (FIXED) -----
 function setupEventListeners() {
@@ -199,8 +220,10 @@ function setupEventListeners() {
     if (DOM.genreFilter) {
         DOM.genreFilter.addEventListener('change', applyFilters);
     }
-    document.getElementById('yearFilter').addEventListener('change', applyFilters);
-    document.getElementById('sortFilter').addEventListener('change', applyFilters);
+    var yearFilter = document.getElementById('yearFilter');
+    if (yearFilter) yearFilter.addEventListener('change', applyFilters);
+    var sortFilter = document.getElementById('sortFilter');
+    if (sortFilter) sortFilter.addEventListener('change', applyFilters);
 
     // ----- Modals -----
     var modalClose = document.getElementById('modalClose');
