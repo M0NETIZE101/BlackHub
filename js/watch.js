@@ -9,10 +9,10 @@ var currentSeason = parseInt(params.get('season')) || 1;
 var currentEpisode = parseInt(params.get('episode')) || 1;
 
 if (!mediaId || (mediaType !== 'movie' && mediaType !== 'tv')) {
-    window.location.replace('index.html');
+    window.location.replace('landing.html');
 }
 
-// ===== POPUP BLOCKER (from player.js) =====
+// ===== POPUP BLOCKER =====
 var popupBlockerEnabled = true;
 var isPlayerActive = true;
 var popupKillerInterval = null;
@@ -297,7 +297,6 @@ async function playEpisode(season, episode) {
         if (!embedUrl) throw new Error('No embed URL');
         loadIframe(embedUrl);
 
-        // Update URL so refresh keeps current episode
         var newUrl = 'watch.html?id=' + mediaId + '&type=tv&season=' + season + '&episode=' + episode;
         history.replaceState(null, '', newUrl);
 
