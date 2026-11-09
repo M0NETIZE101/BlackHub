@@ -48,8 +48,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadGenresFromTMDB().then(function() {
         populateGenreDropdown();
 
-        // If we arrived with ?search= from landing page, run search.
-        // Otherwise show default category.
         var incomingSearch = getIncomingSearchQuery();
         if (incomingSearch) {
             if (DOM.searchInput) DOM.searchInput.value = incomingSearch;
@@ -71,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ----- Read ?search= from URL (used by landing page) -----
+// ----- Read ?search= from URL (used by index.html welcome page) -----
 function getIncomingSearchQuery() {
     try {
         var params = new URLSearchParams(window.location.search);
@@ -83,7 +81,7 @@ function getIncomingSearchQuery() {
     return null;
 }
 
-// ----- Setup Event Listeners (FIXED) -----
+// ----- Setup Event Listeners -----
 function setupEventListeners() {
     var state = window.AppState;
     var DOM = state.DOM;
@@ -304,12 +302,10 @@ function setupEventListeners() {
 function setActiveNav(category) {
     var state = window.AppState;
     
-    // Desktop nav
     document.querySelectorAll('.nav-links a').forEach(function(link) {
         link.classList.toggle('active', link.dataset.category === category);
     });
     
-    // Mobile bottom nav
     document.querySelectorAll('.mobile-bottom-nav a').forEach(function(link) {
         if (link.dataset.category) {
             link.classList.toggle('active', link.dataset.category === category);
