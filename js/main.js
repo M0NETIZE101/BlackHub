@@ -85,8 +85,10 @@ function setupEventListeners() {
         link.addEventListener('click', function(e) {
             e.preventDefault();
             var category = this.dataset.category;
-            setActiveNav(category);
-            loadContent(category);
+            if (category) {
+                setActiveNav(category);
+                loadContent(category);
+            }
         });
     });
 
@@ -275,7 +277,7 @@ function setupEventListeners() {
     setupSocialLinks();
 }
 
-// ----- Set Active Navigation (Desktop + Mobile) (FIXED) -----
+// ----- Set Active Navigation (Desktop + Mobile) -----
 function setActiveNav(category) {
     var state = window.AppState;
     
@@ -284,7 +286,7 @@ function setActiveNav(category) {
         link.classList.toggle('active', link.dataset.category === category);
     });
     
-    // Mobile bottom nav (only for category links, not search)
+    // Mobile bottom nav
     document.querySelectorAll('.mobile-bottom-nav a').forEach(function(link) {
         if (link.dataset.category) {
             link.classList.toggle('active', link.dataset.category === category);

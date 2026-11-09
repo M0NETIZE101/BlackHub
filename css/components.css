@@ -1,5 +1,5 @@
 /* ============================================
-   COMPONENTS - Cards, Badges, Buttons, Modals, Mobile Nav
+   COMPONENTS - Cards, Badges, Buttons, Modals, Anime
    ============================================ */
 
 /* ----- Movies Grid ----- */
@@ -529,6 +529,165 @@
 }
 
 /* ============================================
+   ANIME - Horizontal Carousel
+   ============================================ */
+
+.h-carousel {
+    position: relative;
+    overflow: hidden;
+    margin: 12px 0 32px;
+}
+
+.h-carousel-track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    padding: 8px 4px 12px;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.h-carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+.h-carousel-track .anime-card {
+    flex: 0 0 160px;
+    scroll-snap-align: start;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.h-carousel-track .anime-card:hover {
+    transform: scale(1.05);
+    box-shadow: var(--shadow);
+}
+
+.h-carousel-track .anime-card-inner {
+    position: relative;
+    aspect-ratio: 2/3;
+    overflow: hidden;
+}
+
+.h-carousel-track .anime-card-poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.h-carousel-track .anime-card-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #f5c518;
+    z-index: 2;
+}
+
+.h-carousel-track .anime-card-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 30px 10px 10px;
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-secondary);
+    z-index: 2;
+}
+
+.h-carousel-track .anime-card-title {
+    padding: 8px 8px 4px;
+    font-size: 13px;
+    font-weight: 500;
+    text-align: center;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ============================================
+   ANIME - Schedule
+   ============================================ */
+
+.schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 12px;
+    margin-bottom: 32px;
+}
+
+.schedule-day {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid var(--border-color);
+}
+
+.schedule-day h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+}
+
+.schedule-day ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.schedule-day li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 0;
+    cursor: pointer;
+    transition: var(--transition);
+    border-radius: 4px;
+    padding: 6px 8px;
+}
+
+.schedule-day li:hover {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+}
+
+.schedule-time {
+    font-size: 12px;
+    color: var(--text-muted);
+    min-width: 45px;
+}
+
+.schedule-title {
+    flex: 1;
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.schedule-ep {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+/* ============================================
    MOBILE BOTTOM NAVIGATION
    ============================================ */
 
@@ -606,4 +765,29 @@
     }
 }
 
-/* ----- Remove underline animation for mobile nav link active state (already handled) ----- */
+/* ----- Responsive for Anime Carousel ----- */
+@media (max-width: 768px) {
+    .h-carousel-track .anime-card {
+        flex: 0 0 130px;
+    }
+    .schedule-grid {
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    .h-carousel-track .anime-card {
+        flex: 0 0 110px;
+    }
+    .schedule-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    }
+    .schedule-day li {
+        font-size: 12px;
+        padding: 4px 6px;
+    }
+    .schedule-time {
+        min-width: 35px;
+        font-size: 10px;
+    }
+}

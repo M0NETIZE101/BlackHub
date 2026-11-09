@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#141414">
+    <title>Watch - MoviesAndSeriesHub</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e50914'/%3E%3Ctext x='50' y='68' font-size='60' font-family='Arial' text-anchor='middle' fill='white' font-weight='bold'%3EMSH%3C/text%3E%3C/svg%3E">
+    <link rel="manifest" href="public/manifest.json">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/watch.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        // Apply saved theme before render (no flash)
+        (function() {
+            var saved = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', saved);
+        })();
+    </script>
+</head>
+<body class="watch-body">
+
+    <header class="watch-header-bar">
+        <a href="index.html" class="watch-brand">
+            <i class="fas fa-film"></i>
+            <span>Movies<span class="accent">AndSeries</span>Hub</span>
+        </a>
+        <a href="index.html" class="watch-back">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </header>
+
+    <main class="watch-main">
+        <div class="watch-topbar">
+            <h1 class="watch-title" id="watchTitle">Loading…</h1>
+        </div>
+
+        <div class="watch-player-wrapper" id="watchPlayerWrapper">
+            <div class="watch-loading" id="watchLoading">
+                <div class="spinner"></div>
+                <p>Loading player…</p>
+            </div>
+            <iframe id="watchIframe"
+                src=""
+                allowfullscreen
+                allow="autoplay; encrypted-media; fullscreen"
+                loading="lazy">
+            </iframe>
+            <div class="watch-controls">
+                <button id="watchReloadBtn" title="Reload player" aria-label="Reload">
+                    <i class="fas fa-sync"></i>
+                </button>
+                <button id="watchFsBtn" title="Fullscreen" aria-label="Fullscreen">
+                    <i class="fas fa-expand"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- TV-only season/episode controls -->
+        <div class="watch-tv-controls" id="watchTvControls" style="display:none;">
+            <label>Season <select id="watchSeasonSelect"></select></label>
+            <label>Episode <select id="watchEpisodeSelect"></select></label>
+        </div>
+
+        <!-- Info panel -->
+        <div class="watch-info" id="watchInfo">
+            <img class="watch-poster" id="watchPoster" src="" alt="">
+            <div class="watch-info-text">
+                <h2 id="watchInfoTitle">Loading…</h2>
+                <div class="watch-meta" id="watchMeta"></div>
+                <p class="watch-overview" id="watchOverview"></p>
+            </div>
+        </div>
+
+        <!-- Up Next -->
+        <section class="watch-up-next" id="watchUpNext" style="display:none;">
+            <h3><i class="fas fa-forward"></i> Up Next</h3>
+            <div class="watch-up-next-grid" id="watchUpNextGrid"></div>
+        </section>
+
+        <div class="watch-attribution">
+            <p>&copy; 2026 MoviesAndSeriesHub. Data provided by TMDB.</p>
+        </div>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/embed-config.js"></script>
+    <script src="js/watch.js"></script>
+</body>
+</html>

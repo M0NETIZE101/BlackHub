@@ -1,5 +1,6 @@
 // ============================================
 // MoviesAndSeriesHub - Card Creation
+// Cards now navigate to watch.html instead of opening modal player.
 // ============================================
 
 // ----- Create Card (with genre tags from TMDB) -----
@@ -17,14 +18,18 @@ function createCard(item, type) {
 
     var name = item.title || item.name || 'Unknown';
     var rating = item.vote_average ? item.vote_average.toFixed(1) : 'N/A';
-    var year = item.release_date ? item.release_date.substring(0, 4) : item.first_air_date ? item.first_air_date.substring(0, 4) : 'N/A';
+    var year = item.release_date
+        ? item.release_date.substring(0, 4)
+        : item.first_air_date
+            ? item.first_air_date.substring(0, 4)
+            : 'N/A';
     var safeTitle = name.replace(/'/g, "\\'");
     var inWatchlist = isInWatchlist(item.id);
-    
+
     var stars = Math.round(item.vote_average / 2);
     var starHtml = '★'.repeat(Math.min(stars, 5)) + '☆'.repeat(Math.max(0, 5 - stars));
     var isTrending = item.vote_count > 1000;
-    
+
     var isTv = type === 'tv';
     var typeLabel = isTv ? 'TV Show' : 'Movie';
 
@@ -33,7 +38,9 @@ function createCard(item, type) {
         .map(function(id) { return state.genreMap[id]; })
         .filter(function(g) { return g; });
     var genreTags = genreNames.map(function(g) {
-        var genreId = Object.keys(state.genreMap).find(function(key) { return state.genreMap[key] === g; });
+        var genreId = Object.keys(state.genreMap).find(function(key) {
+            return state.genreMap[key] === g;
+        });
         return '<span class="genre-tag" data-genre-id="' + genreId + '">' + g + '</span>';
     }).join('');
 
@@ -94,23 +101,26 @@ function createCard(item, type) {
         });
     });
 
+    // WATCH NOW → navigate to watch.html
     var watchBtn = card.querySelector('.watch-btn');
     if (watchBtn) {
         watchBtn.addEventListener('click', function(e) {
             e.stopPropagation();
             var id = parseInt(this.dataset.id);
-            var type = this.dataset.type;
-            var title = this.dataset.title;
-            if (type === 'tv') {
-                openSeasonsModal(id, title);
+            var cardType = this.dataset.type;
+            if (cardType === 'tv') {
+                window.location.href = 'watch.html?id=' + id + '&type=tv&season=1&episode=1';
             } else {
-                openPlayerWithImdb(id, title);
+                window.location.href = 'watch.html?id=' + id + '&type=movie';
             }
         });
     }
 
+    // CARD CLICK → open detail modal (browse-only)
     card.addEventListener('click', function(e) {
-        if (!e.target.closest('.watch-btn') && !e.target.closest('.watchlist-btn') && !e.target.closest('.genre-tag')) {
+        if (!e.target.closest('.watch-btn') &&
+            !e.target.closest('.watchlist-btn') &&
+            !e.target.closest('.genre-tag')) {
             if (type === 'tv') {
                 openSeasonsModal(item.id, name);
             } else {

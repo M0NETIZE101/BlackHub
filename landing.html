@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#141414">
+    <meta name="description" content="MoviesAndSeriesHub - Stream unlimited movies and TV shows.">
+    <title>MoviesAndSeriesHub - Welcome</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e50914'/%3E%3Ctext x='50' y='68' font-size='60' font-family='Arial' text-anchor='middle' fill='white' font-weight='bold'%3EMSH%3C/text%3E%3C/svg%3E">
+    <link rel="manifest" href="public/manifest.json">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/landing.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="landing-body">
+
+    <section class="landing-hero">
+        <div class="landing-backdrop" id="landingBackdrop"></div>
+        <div class="landing-overlay"></div>
+        <div class="landing-content">
+            <div class="landing-logo">
+                <i class="fas fa-film"></i>
+                <span>Movies<span class="accent">AndSeries</span>Hub</span>
+            </div>
+            <p class="landing-tagline">Unlimited Movies & TV Shows.<br>Anytime, Anywhere.</p>
+            <button class="landing-cta" id="landingEnterBtn">
+                Enter Site <i class="fas fa-arrow-right"></i>
+            </button>
+            <p class="landing-hint">
+                Redirecting in <span id="landingCountdown">6</span>s…
+            </p>
+        </div>
+    </section>
+
+    <section class="landing-trending">
+        <h2><i class="fas fa-fire"></i> Trending This Week</h2>
+        <div class="landing-trending-grid" id="landingTrendingGrid"></div>
+        <p class="landing-attribution">Data provided by TMDB. © 2026 MoviesAndSeriesHub.</p>
+    </section>
+
+    <script src="js/config.js"></script>
+    <script src="js/landing.js"></script>
+</body>
+</html>

@@ -1,0 +1,160 @@
+.landing-body {
+    margin: 0;
+    padding: 0;
+    background: #0a0a0a;
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.landing-hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.landing-backdrop {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: blur(6px);
+    transform: scale(1.1);
+    opacity: 0.35;
+    transition: opacity 1.2s ease;
+}
+
+.landing-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at center, rgba(20,20,20,0.5) 0%, rgba(10,10,10,0.95) 80%),
+        linear-gradient(135deg, rgba(10,10,10,0.85), rgba(20,20,20,0.7));
+    z-index: 1;
+}
+
+.landing-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 40px 20px;
+    max-width: 700px;
+}
+
+.landing-logo {
+    font-size: 42px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    color: #fff;
+    letter-spacing: -0.5px;
+}
+.landing-logo i {
+    color: var(--primary);
+    font-size: 48px;
+}
+.landing-logo .accent { color: var(--primary); }
+
+.landing-tagline {
+    font-size: 20px;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    line-height: 1.5;
+    font-weight: 300;
+}
+
+.landing-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 44px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 32px rgba(229, 9, 20, 0.4);
+}
+.landing-cta:hover {
+    background: var(--primary-hover);
+    transform: scale(1.05);
+    box-shadow: 0 12px 48px rgba(229, 9, 20, 0.6);
+}
+
+.landing-hint {
+    margin-top: 28px;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.landing-trending {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 60px 4%;
+    border-top: 1px solid var(--border-color);
+}
+
+.landing-trending h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.landing-trending h2 i { color: var(--primary); }
+
+.landing-trending-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
+}
+
+.landing-trending-card {
+    position: relative;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 2/3;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    background: var(--bg-secondary);
+}
+.landing-trending-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+}
+.landing-trending-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.landing-attribution {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 40px;
+}
+
+@media (max-width: 768px) {
+    .landing-logo { font-size: 28px; }
+    .landing-logo i { font-size: 32px; }
+    .landing-tagline { font-size: 15px; margin-bottom: 32px; }
+    .landing-cta { padding: 14px 32px; font-size: 16px; }
+    .landing-trending-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    }
+    .landing-trending h2 { font-size: 20px; }
+}

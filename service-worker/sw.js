@@ -1,11 +1,14 @@
 // ============================================
-// MoviesAndSeriesHub - Service Worker
+// MoviesAndSeriesHub - Service Worker (v3)
+// Adds landing.html + watch.html + new CSS/JS to cache.
 // ============================================
 
-const CACHE_NAME = 'moviesandserieshub-v2';
+const CACHE_NAME = 'moviesandserieshub-v3';
 const ASSETS_TO_CACHE = [
     '/',
+    '/landing.html',
     '/index.html',
+    '/watch.html',
     '/style.css',
     '/script.js',
     '/embed-config.js',
@@ -15,7 +18,40 @@ const ASSETS_TO_CACHE = [
     '/pages/offline.html',
     '/pages/privacy.html',
     '/pages/terms.html',
-    '/pages/rijan.html'
+    '/pages/rijan.html',
+    // Modular CSS
+    '/css/base.css',
+    '/css/layout.css',
+    '/css/components.css',
+    '/css/player.css',
+    '/css/continue.css',
+    '/css/filters.css',
+    '/css/modals.css',
+    '/css/seasons.css',
+    '/css/footer.css',
+    '/css/toasts.css',
+    '/css/utilities.css',
+    '/css/responsive.css',
+    '/css/landing.css',
+    '/css/watch.css',
+    // Modular JS
+    '/js/config.js',
+    '/js/state.js',
+    '/js/utils.js',
+    '/js/api.js',
+    '/js/embed-config.js',
+    '/js/theme.js',
+    '/js/watchlist.js',
+    '/js/player.js',
+    '/js/modals.js',
+    '/js/cards.js',
+    '/js/ui.js',
+    '/js/filters.js',
+    '/js/search.js',
+    '/js/social.js',
+    '/js/main.js',
+    '/js/landing.js',
+    '/js/watch.js'
 ];
 
 // Install event - cache core assets
@@ -23,12 +59,10 @@ self.addEventListener('install', function(event) {
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(function(cache) {
-                console.log('Opened cache');
-                // Cache only local assets, skip external URLs
+                console.log('Opened cache:', CACHE_NAME);
                 return cache.addAll(ASSETS_TO_CACHE)
                     .catch(function(err) {
                         console.warn('Some assets failed to cache:', err);
-                        // Continue even if some fail
                     });
             })
             .then(function() {
@@ -60,9 +94,8 @@ self.addEventListener('fetch', function(event) {
     var request = event.request;
     var url = new URL(request.url);
 
-    // Skip cross-origin requests (like via.placeholder.com, TMDB images, etc.)
+    // Skip cross-origin requests (TMDB images, embeds, etc.)
     if (url.origin !== self.location.origin) {
-        // Just fetch from network, don't cache
         event.respondWith(fetch(request));
         return;
     }
@@ -71,15 +104,12 @@ self.addEventListener('fetch', function(event) {
     event.respondWith(
         caches.match(request)
             .then(function(response) {
-                if (response) {
-                    return response;
-                }
+                if (response) return response;
+
                 return fetch(request).then(function(networkResponse) {
-                    // Don't cache non-200 responses
                     if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
                         return networkResponse;
                     }
-                    // Cache the fetched response for future
                     var responseToCache = networkResponse.clone();
                     caches.open(CACHE_NAME)
                         .then(function(cache) {
@@ -89,8 +119,7 @@ self.addEventListener('fetch', function(event) {
                             console.warn('Could not cache:', request.url, err);
                         });
                     return networkResponse;
-                }).catch(function(error) {
-                    // If offline and asset is HTML, serve offline page
+                }).catch(function() {
                     if (request.headers.get('accept') && request.headers.get('accept').includes('text/html')) {
                         return caches.match('/pages/offline.html');
                     }

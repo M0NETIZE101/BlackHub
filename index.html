@@ -9,26 +9,32 @@
     <title>MoviesAndSeriesHub - Your Movie & TV Streaming Guide</title>
     <meta name="description" content="MoviesAndSeriesHub - Watch movies and TV shows online for free. Stream the latest movies, TV series, and more.">
     <meta name="robots" content="index, follow">
+
+    <!-- First-time visitors → landing page -->
+    <script>
+        if (!localStorage.getItem('landingSeen')) {
+            location.replace('landing.html');
+        }
+    </script>
+
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23e50914'/%3E%3Ctext x='50' y='68' font-size='60' font-family='Arial' text-anchor='middle' fill='white' font-weight='bold'%3EMSH%3C/text%3E%3C/svg%3E">
     <link rel="manifest" href="public/manifest.json">
-    <!-- CSS -->
-<link rel="stylesheet" href="css/base.css">
-<link rel="stylesheet" href="css/layout.css">
-<link rel="stylesheet" href="css/components.css">
-<link rel="stylesheet" href="css/player.css">
-<link rel="stylesheet" href="css/continue.css">
-<link rel="stylesheet" href="css/filters.css">
-<link rel="stylesheet" href="css/modals.css">
-<link rel="stylesheet" href="css/seasons.css">
-<link rel="stylesheet" href="css/footer.css">
-<link rel="stylesheet" href="css/toasts.css">
-<link rel="stylesheet" href="css/utilities.css">
-<link rel="stylesheet" href="css/responsive.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/player.css">
+    <link rel="stylesheet" href="css/continue.css">
+    <link rel="stylesheet" href="css/filters.css">
+    <link rel="stylesheet" href="css/modals.css">
+    <link rel="stylesheet" href="css/seasons.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/toasts.css">
+    <link rel="stylesheet" href="css/utilities.css">
+    <link rel="stylesheet" href="css/responsive.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <!-- HEADER -->
+    <!-- ===== HEADER ===== -->
     <header class="header" id="header">
         <nav class="nav">
             <div class="logo">
@@ -39,10 +45,10 @@
                 <i class="fas fa-bars"></i>
             </button>
             <div class="nav-links" id="navLinks">
-                <a href="#" class="active" data-category="now_playing">Now Playing</a>
-                <a href="#" data-category="popular">Popular</a>
-                <a href="#" data-category="top_rated">Top Rated</a>
-                <a href="#" data-category="upcoming">Upcoming</a>
+                <a href="index.html" class="active" data-category="now_playing">Now Playing</a>
+                <a href="index.html" data-category="popular">Popular</a>
+                <a href="index.html" data-category="top_rated">Top Rated</a>
+                <a href="index.html" data-category="upcoming">Upcoming</a>
             </div>
             <div class="header-actions">
                 <div class="search-container">
@@ -58,7 +64,7 @@
         </nav>
     </header>
 
-    <!-- HERO BANNER -->
+    <!-- ===== HERO BANNER ===== -->
     <section class="hero" id="hero">
         <div class="hero-content">
             <h1 id="heroTitle">Welcome to MoviesAndSeriesHub</h1>
@@ -74,7 +80,7 @@
         </div>
     </section>
 
-    <!-- CONTINUE WATCHING -->
+    <!-- ===== CONTINUE WATCHING ===== -->
     <section class="continue-watching" id="continueWatching" style="display:none;">
         <div class="section-header">
             <h2><i class="fas fa-clock" style="color: var(--primary);"></i> Continue Watching</h2>
@@ -82,7 +88,7 @@
         <div class="continue-grid"></div>
     </section>
 
-    <!-- MOVIES / TV SHOWS SECTION -->
+    <!-- ===== MOVIES / TV SHOWS SECTION ===== -->
     <section class="movies-section">
         <div class="section-header">
             <div>
@@ -134,7 +140,7 @@
         </div>
     </section>
 
-    <!-- MOVIE DETAIL MODAL -->
+    <!-- ===== MOVIE DETAIL MODAL ===== -->
     <div class="modal" id="movieModal">
         <div class="modal-content">
             <span class="modal-close" id="modalClose">&times;</span>
@@ -142,7 +148,7 @@
         </div>
     </div>
 
-    <!-- SEASONS & EPISODES MODAL -->
+    <!-- ===== SEASONS & EPISODES MODAL ===== -->
     <div class="modal" id="seasonsModal">
         <div class="modal-content">
             <span class="modal-close" id="seasonsModalClose">&times;</span>
@@ -150,7 +156,7 @@
         </div>
     </div>
 
-    <!-- ===== PLAYER MODAL – NO OVERLAY ===== -->
+    <!-- ===== PLAYER MODAL (kept for embedded preview / fallback) ===== -->
     <div class="player-modal" id="playerModal">
         <div class="player-container">
             <div class="player-header">
@@ -158,7 +164,11 @@
                 <button class="player-close" id="playerClose">&times;</button>
             </div>
             <div class="player-wrapper">
-                <!-- Iframe – NO SANDBOX (popups blocked by JavaScript) -->
+                <div class="play-overlay" id="playOverlay" style="display:none;">
+                    <div class="play-icon"><i class="fas fa-play"></i></div>
+                    <div class="play-text">Click to Play</div>
+                    <div class="play-sub">Popup blocker is active</div>
+                </div>
                 <iframe id="playerIframe"
                     src=""
                     width="100%"
@@ -168,8 +178,6 @@
                     allow="autoplay; encrypted-media; fullscreen"
                     loading="lazy">
                 </iframe>
-
-                <!-- Loading Spinner -->
                 <div class="player-loading" id="playerLoading" style="display: none;">
                     <div class="spinner"></div>
                     <span>Loading video...</span>
@@ -183,7 +191,7 @@
         </div>
     </div>
 
-    <!-- TRAILER MODAL -->
+    <!-- ===== TRAILER MODAL ===== -->
     <div class="trailer-modal" id="trailerModal">
         <div class="trailer-content">
             <button class="trailer-close" id="trailerClose"><i class="fas fa-times"></i></button>
@@ -191,19 +199,19 @@
         </div>
     </div>
 
-    <!-- BACK TO TOP -->
+    <!-- ===== BACK TO TOP ===== -->
     <button id="backToTop" class="back-to-top"><i class="fas fa-arrow-up"></i></button>
 
-    <!-- MOBILE BOTTOM NAVIGATION -->
+    <!-- ===== MOBILE BOTTOM NAVIGATION ===== -->
     <nav class="mobile-bottom-nav" id="mobileBottomNav">
-        <a href="#" class="active" data-category="now_playing"><i class="fas fa-home"></i><span>Home</span></a>
-        <a href="#" data-category="popular"><i class="fas fa-fire"></i><span>Popular</span></a>
-        <a href="#" data-category="top_rated"><i class="fas fa-star"></i><span>Top</span></a>
-        <a href="#" data-category="upcoming"><i class="fas fa-calendar-plus"></i><span>Upcoming</span></a>
+        <a href="index.html" class="active" data-category="now_playing"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="index.html" data-category="popular"><i class="fas fa-fire"></i><span>Popular</span></a>
+        <a href="index.html" data-category="top_rated"><i class="fas fa-star"></i><span>Top</span></a>
+        <a href="index.html" data-category="upcoming"><i class="fas fa-calendar-plus"></i><span>Upcoming</span></a>
         <a href="#" id="mobileSearchToggle"><i class="fas fa-search"></i><span>Search</span></a>
     </nav>
 
-    <!-- FOOTER -->
+    <!-- ===== FOOTER ===== -->
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
@@ -212,10 +220,10 @@
             </div>
             <div class="footer-section">
                 <h4>Categories</h4>
-                <a href="#" data-category="now_playing">Now Playing</a>
-                <a href="#" data-category="popular">Popular Movies & TV</a>
-                <a href="#" data-category="top_rated">Top Rated</a>
-                <a href="#" data-category="upcoming">Upcoming</a>
+                <a href="index.html" data-category="now_playing">Now Playing</a>
+                <a href="index.html" data-category="popular">Popular Movies & TV</a>
+                <a href="index.html" data-category="top_rated">Top Rated</a>
+                <a href="index.html" data-category="upcoming">Upcoming</a>
             </div>
             <div class="footer-section">
                 <h4>Legal</h4>
@@ -238,7 +246,7 @@
         </div>
     </footer>
 
-    <!-- SCRIPTS -->
+    <!-- ===== SCRIPTS ===== -->
     <script src="js/config.js"></script>
     <script src="js/state.js"></script>
     <script src="js/utils.js"></script>
@@ -255,16 +263,16 @@
     <script src="js/social.js"></script>
     <script src="js/main.js"></script>
 
-    <!-- SERVICE WORKER REGISTRATION -->
+    <!-- ===== SERVICE WORKER REGISTRATION ===== -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', function() {
                 navigator.serviceWorker.register('service-worker/sw.js')
                     .then(function(reg) {
-                        console.log('Service Worker registered successfully!');
+                        console.log('✅ Service Worker registered successfully!');
                     })
                     .catch(function(err) {
-                        console.warn('Service Worker registration failed:', err);
+                        console.warn('⚠️ Service Worker registration failed:', err);
                     });
             });
         }

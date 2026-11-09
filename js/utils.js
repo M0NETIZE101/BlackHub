@@ -79,22 +79,17 @@ function setupKeyboardShortcuts() {
     });
 }
 
-// ----- Continue Watching ROW (FIXED) -----
-// ----- Continue Watching ROW (FIXED) -----
+// ----- Continue Watching ROW -----
+// Cards now navigate to watch.html instead of opening modal player.
 function renderContinueWatching() {
     var state = window.AppState;
     var container = document.getElementById('continueWatching');
-    if (!container) {
-        console.log('Continue watching container not found');
-        return;
-    }
+    if (!container) return;
 
     var history = Object.values(state.watchHistory)
         .filter(function(item) { return !item.watched; })
         .sort(function(a, b) { return b.lastWatched - a.lastWatched; })
         .slice(0, 10);
-
-    console.log('Continue Watching items:', history.length);
 
     if (history.length === 0) {
         container.style.display = 'none';
@@ -109,19 +104,12 @@ function renderContinueWatching() {
     history.forEach(function(item) {
         var card = document.createElement('div');
         card.className = 'continue-card';
-        
-        // Debug: log what we have
-        console.log('Item:', item.title, 'poster_path:', item.poster_path);
-        
-        // Construct poster URL
+
         var posterUrl = PLACEHOLDER_IMAGE;
         if (item.poster_path) {
             posterUrl = IMAGE_BASE + '/w200' + item.poster_path;
-            console.log('✅ Using poster_path:', posterUrl);
-        } else {
-            console.log('❌ No poster for:', item.title);
         }
-        
+
         var progress = Math.round(item.progress || 0);
         var isTv = item.type === 'tv';
         var title = item.title || item.name || 'Unknown';
@@ -139,11 +127,12 @@ function renderContinueWatching() {
             </div>
         `;
 
+        // Continue Watching → navigate to watch.html
         card.addEventListener('click', function() {
             if (isTv) {
-                openSeasonsModal(item.id, title);
+                window.location.href = 'watch.html?id=' + item.id + '&type=tv&season=1&episode=1';
             } else {
-                openPlayerWithImdb(item.id, title);
+                window.location.href = 'watch.html?id=' + item.id + '&type=movie';
             }
         });
         grid.appendChild(card);
