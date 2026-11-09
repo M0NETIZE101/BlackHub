@@ -11,24 +11,51 @@
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/landing.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        // Apply saved theme before render
+        (function() {
+            var saved = localStorage.getItem('theme') || 'dark';
+            document.documentElement.setAttribute('data-theme', saved);
+        })();
+    </script>
 </head>
 <body class="landing-body">
 
     <section class="landing-hero">
         <div class="landing-backdrop" id="landingBackdrop"></div>
         <div class="landing-overlay"></div>
+
         <div class="landing-content">
             <div class="landing-logo">
                 <i class="fas fa-film"></i>
                 <span>Movies<span class="accent">AndSeries</span>Hub</span>
             </div>
-            <p class="landing-tagline">Unlimited Movies & TV Shows.<br>Anytime, Anywhere.</p>
+            <p class="landing-tagline">Unlimited Movies &amp; TV Shows.<br>Anytime, Anywhere.</p>
+
+            <!-- Search -->
+            <div class="landing-search-row">
+                <div class="landing-search-box" id="landingSearchBox">
+                    <button type="button" class="landing-search-icon-btn" id="landingSearchIconBtn" aria-label="Open search">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <div class="landing-search-input-wrap">
+                        <i class="fas fa-search landing-search-inside-icon"></i>
+                        <input type="text"
+                               class="landing-search-input"
+                               id="landingSearchInput"
+                               placeholder="Search movies or TV shows..."
+                               autocomplete="off">
+                    </div>
+                    <button type="button" class="landing-search-close-btn" id="landingSearchCloseBtn" aria-label="Close search">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Watch Now -->
             <button class="landing-cta" id="landingEnterBtn">
-                Enter Site <i class="fas fa-arrow-right"></i>
+                <i class="fas fa-play"></i> Watch Now
             </button>
-            <p class="landing-hint">
-                Redirecting in <span id="landingCountdown">6</span>s…
-            </p>
         </div>
     </section>
 
