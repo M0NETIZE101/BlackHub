@@ -175,7 +175,7 @@
 <body>
     <header class="header-simple">
         <nav style="max-width:1440px;margin:0 auto;">
-            <a href="../index.html" class="logo">
+            <a href="../landing.html" class="logo">
                 <i class="fas fa-film"></i>
                 <span>Movies<span>AndSeries</span>Hub</span>
             </a>
@@ -193,7 +193,7 @@
             <h1>Page Not Found</h1>
             <p>Oops! The page you're looking for doesn't exist or has been moved. Let's get you back on track.</p>
             <div class="error-actions">
-                <a href="../index.html" class="btn-primary">
+                <a href="../landing.html" class="btn-primary">
                     <i class="fas fa-home"></i> Back to Home
                 </a>
                 <a href="javascript:history.back()" class="btn-secondary">
@@ -204,19 +204,19 @@
             <div class="movie-suggestions">
                 <h3>🎥 Popular Movies You Might Like</h3>
                 <div class="suggestions-grid" id="suggestionsGrid">
-                    <div class="suggestion-item" onclick="window.location.href='../index.html'">
+                    <div class="suggestion-item" onclick="window.location.href='../landing.html'">
                         <img src="https://image.tmdb.org/t/p/w200/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg" alt="Inception" loading="lazy" onerror="this.style.display='none'">
                         <div class="title">Inception</div>
                     </div>
-                    <div class="suggestion-item" onclick="window.location.href='../index.html'">
+                    <div class="suggestion-item" onclick="window.location.href='../landing.html'">
                         <img src="https://image.tmdb.org/t/p/w200/qJ2tW6WMUDux911r6m7haRef0WH.jpg" alt="Interstellar" loading="lazy" onerror="this.style.display='none'">
                         <div class="title">Interstellar</div>
                     </div>
-                    <div class="suggestion-item" onclick="window.location.href='../index.html'">
+                    <div class="suggestion-item" onclick="window.location.href='../landing.html'">
                         <img src="https://image.tmdb.org/t/p/w200/7WsyChQLEftFiDOVTGkv3hFpyyt.jpg" alt="Avengers" loading="lazy" onerror="this.style.display='none'">
                         <div class="title">Avengers</div>
                     </div>
-                    <div class="suggestion-item" onclick="window.location.href='../index.html'">
+                    <div class="suggestion-item" onclick="window.location.href='../landing.html'">
                         <img src="https://image.tmdb.org/t/p/w200/ikR4wVv88p7OBGZZYOp8N4Ssdak.jpg" alt="The Batman" loading="lazy" onerror="this.style.display='none'">
                         <div class="title">The Batman</div>
                     </div>
@@ -236,7 +236,6 @@
             btn.className = newTheme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
         }
 
-        // Load saved theme
         const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.setAttribute('data-theme', savedTheme);
         const btn = document.querySelector('.theme-toggle i');
